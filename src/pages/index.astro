@@ -1,0 +1,515 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import HausSchnitt from '@/components/HausSchnitt.astro';
+import Stimmen from '@/components/Stimmen.astro';
+import TerminAssistent from '@/components/TerminAssistent.astro';
+import Piktogramm from '@/components/Piktogramm.astro';
+import { business, routeUrl } from '@/data/business';
+import { team } from '@/data/team';
+
+const kurzTeam = team.slice(0, 8);
+---
+
+<Basis
+  titel="Franzmann — Bad und Heizung in Weinheim | Hermann Franzmann GmbH"
+  beschreibung="Heizung, Bad, Klima und Kundendienst aus einer Hand in Weinheim. Wärmepumpe, Badsanierung, Klimaanlage und Wartung — vom Meisterbetrieb in der Weinheimer Altstadt."
+  hauptseite
+>
+  <!-- ============ Planblatt: Der Schnitt durch das Haus ============ -->
+  <section class="blatt plan-raster" aria-labelledby="blatt-titel">
+    <div class="schacht blatt__inhalt">
+      <div class="schriftfeld">
+        <p class="pos">Weinheim · Bergstraße</p>
+        <h1 id="blatt-titel">
+          Alles fürs Haus —<br />
+          <span class="schriftfeld__betont">vom Keller bis zum Dach.</span>
+        </h1>
+        <p class="schriftfeld__text">
+          Heizung, Bad, Klima und Kundendienst aus einer Hand. Wir planen, bauen
+          und betreuen die Technik in Ihrem Zuhause — seit über hundert Jahren
+          aus der Weinheimer Altstadt.
+        </p>
+        <div class="schriftfeld__wege">
+          <a class="knopf knopf--handlung knopf--gross" href="/termin">Termin anfragen</a>
+          <a class="knopf knopf--leer knopf--gross" href={business.phone.href}>
+            {business.phone.display}
+          </a>
+        </div>
+        <p class="schriftfeld__hinweis mass">
+          Tippen Sie in die Zeichnung — jede Ebene führt zu ihrer Leistung
+        </p>
+      </div>
+
+      <HausSchnitt anordnung="blatt" />
+    </div>
+  </section>
+
+  <!-- ============ Störung: der dringendste Anlass ============ -->
+  <section class="stoerung" aria-labelledby="stoerung-titel">
+    <div class="schacht stoerung__inhalt">
+      <span class="stoerung__zeichen" aria-hidden="true">
+        <Piktogramm name="notdienst" size={26} />
+      </span>
+      <div class="stoerung__text">
+        <h2 id="stoerung-titel">Heizung ausgefallen? Wasser, wo keins hingehört?</h2>
+        <p>
+          In dringenden Fällen rufen Sie am besten direkt an — das geht schneller
+          als jedes Formular. {business.ownStatements.service}
+        </p>
+      </div>
+      <a class="knopf stoerung__ruf" href={business.emergency.href}>
+        {business.emergency.display}
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ Der Betrieb ============ -->
+  <section class="abschnitt betrieb" aria-labelledby="betrieb-titel">
+    <div class="schacht betrieb__gitter">
+      <figure class="betrieb__bild" data-auftritt="seite">
+        <img src="/bilder/betrieb-muenzgasse.webp"
+             srcset="/bilder/betrieb-muenzgasse-800.webp 800w, /bilder/betrieb-muenzgasse.webp 1600w"
+             sizes="(min-width: 66rem) 46vw, 92vw"
+             width="1600" height="1067" loading="lazy" decoding="async"
+             alt="Das Betriebsgebäude in der Münzgasse: Sandsteinfassade mit blauen Fensterläden und Rundbogentor" />
+        <figcaption class="mass">Münzgasse, Weinheimer Altstadt</figcaption>
+      </figure>
+
+      <div class="betrieb__text" data-auftritt>
+        <p class="pos">Der Betrieb</p>
+        <h2 id="betrieb-titel">Ein Handwerk, das man im Haus sieht — und im Ort findet.</h2>
+        <p>
+          Unsere Werkstatt sitzt seit Generationen im Gerberbachviertel, hinter der
+          Sandsteinfassade mit den blauen Läden. Wer bei uns anruft, spricht mit
+          Menschen, die den Ort kennen und die Anlage später selbst warten.
+        </p>
+        <p>
+          {business.ownStatements.philosophy} Von der ersten Beratung bis zur
+          Übergabe koordinieren wir alle Gewerke — Sie haben einen Ansprechpartner
+          statt fünf Telefonnummern.
+        </p>
+
+        <dl class="merkmale">
+          <div>
+            <dt>Erfahrung</dt>
+            <dd>über 100 Jahre</dd>
+          </div>
+          <div>
+            <dt>Bäder realisiert</dt>
+            <dd>über 1000</dd>
+          </div>
+          <div>
+            <dt>Im Betrieb</dt>
+            <dd>{team.length} Personen</dd>
+          </div>
+        </dl>
+        <p class="merkmale__quelle mass">Angaben des Betriebs</p>
+
+        <a class="knopf knopf--leer" href="/team">Die Menschen dahinter</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Ablauf ============ -->
+  <section class="abschnitt ablauf" aria-labelledby="ablauf-titel">
+    <div class="schacht">
+      <div class="abschnitt-kopf" data-auftritt>
+        <p class="pos">So arbeiten wir</p>
+        <h2 id="ablauf-titel">Vier Schritte, die bei jedem Auftrag gleich sind</h2>
+        <p>
+          Egal ob neue Heizung, neues Bad oder eine Reparatur: Der Weg ist immer
+          derselbe — damit Sie jederzeit wissen, woran Sie sind.
+        </p>
+      </div>
+
+      <ol class="ablauf__kette">
+        {[
+          { n: '01', t: 'Wir hören zu', x: 'Am Telefon oder bei Ihnen zu Hause. Wir schauen uns an, was da ist, und Sie sagen uns, was Sie sich vorstellen — einschließlich Budget.', p: 'beratung' },
+          { n: '02', t: 'Wir planen', x: 'Wir legen die Möglichkeiten nebeneinander, rechnen sie durch und zeigen Ihnen das Ergebnis — beim Bad auch als 3D-Ansicht.', p: 'planung-3d' },
+          { n: '03', t: 'Wir bauen', x: 'Eigene Mitarbeiter, ein Ablaufplan mit Anfangs- und Endtermin und ein Ansprechpartner, der die Gewerke koordiniert.', p: 'reparatur' },
+          { n: '04', t: 'Wir bleiben', x: 'Nach der Übergabe übernehmen wir Wartung und Service. Erst wenn Sie zufrieden sind, sind wir es auch.', p: 'wartung' },
+        ].map((s, i) => (
+          <li class="stufe" data-auftritt data-verzug={i * 90}>
+            <span class="stufe__nummer mass">{s.n}</span>
+            <span class="stufe__zeichen" aria-hidden="true">
+              <Piktogramm name={s.p as any} size={24} />
+            </span>
+            <h3>{s.t}</h3>
+            <p>{s.x}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ Team ============ -->
+  <section class="abschnitt mannschaft" aria-labelledby="mannschaft-titel">
+    <div class="schacht">
+      <div class="abschnitt-kopf" data-auftritt>
+        <p class="pos">Die Mannschaft</p>
+        <h2 id="mannschaft-titel">Wer zu Ihnen kommt</h2>
+        <p>
+          Keine wechselnden Subunternehmer: Planung, Montage und Kundendienst
+          machen dieselben Leute, die Sie hier sehen.
+        </p>
+      </div>
+
+      <ul class="reihe">
+        {kurzTeam.map((m, i) => (
+          <li class="kopfbild" data-auftritt data-verzug={i * 55}>
+            <img src={m.photo} width="560" height="700" loading="lazy" decoding="async"
+                 alt={`${m.name}, ${m.role}`} />
+            <span class="kopfbild__name">{m.name}</span>
+            <span class="kopfbild__rolle mass">{m.role}</span>
+          </li>
+        ))}
+      </ul>
+      <a class="knopf knopf--leer mannschaft__mehr" href="/team">
+        Alle {team.length} im Betrieb ansehen
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ Stimmen ============ -->
+  <section class="abschnitt">
+    <div class="schacht"><Stimmen /></div>
+  </section>
+
+  <!-- ============ Termin ============ -->
+  <section class="abschnitt termin-flaeche" id="termin">
+    <div class="schacht">
+      <TerminAssistent />
+    </div>
+  </section>
+
+  <!-- ============ Standort ============ -->
+  <section class="abschnitt standort" aria-labelledby="standort-titel">
+    <div class="schacht standort__gitter">
+      <div data-auftritt>
+        <p class="pos">Standort</p>
+        <h2 id="standort-titel">Sie finden uns in der Altstadt</h2>
+        <p class="standort__text">
+          Die Werkstatt liegt in der {business.address.street.split(' ')[0]} im
+          {' '}{business.address.quarter} — Kopfsteinpflaster, Sandstein, blaue Läden.
+          Kommen Sie gern vorbei, am besten nach Absprache, damit jemand für Sie da ist.
+        </p>
+
+        <dl class="standort__daten">
+          <div>
+            <dt>Adresse</dt>
+            <dd>{business.address.street}<br />{business.address.postalCode} {business.address.city}</dd>
+          </div>
+          <div>
+            <dt>Bürozeiten</dt>
+            <dd>{business.officeHours.days}<br />{business.officeHours.from} – {business.officeHours.to} Uhr</dd>
+          </div>
+          <div>
+            <dt>Telefon</dt>
+            <dd><a href={business.phone.href}>{business.phone.display}</a></dd>
+          </div>
+          <div>
+            <dt>E-Mail</dt>
+            <dd><a href={`mailto:${business.email}`}>{business.email}</a></dd>
+          </div>
+        </dl>
+
+        <div class="standort__wege">
+          <a class="knopf knopf--leer" href={routeUrl} target="_blank" rel="noopener noreferrer">
+            Route berechnen
+          </a>
+          <a class="knopf knopf--leer" href="/kontakt">Kontakt und Anfahrt</a>
+        </div>
+      </div>
+
+      <!-- Kartenausschnitt aus offenen Daten, beim Bauen erzeugt: keine Verbindung
+           zu Dritten beim Besuch, kein Nachladen, kein Springen des Layouts. -->
+      <div class="karte" data-auftritt="seite">
+        <a class="karte__bild" href={routeUrl} target="_blank" rel="noopener noreferrer">
+          <img src="/bilder/karte-muenzgasse.webp"
+               srcset="/bilder/karte-muenzgasse-700.webp 700w, /bilder/karte-muenzgasse.webp 1200w"
+               sizes="(min-width: 62rem) 44vw, 92vw"
+               width="1200" height="615" loading="lazy" decoding="async"
+               alt="Kartenausschnitt der Weinheimer Altstadt mit markiertem Standort in der Münzgasse" />
+          <span class="karte__marke">Route berechnen</span>
+        </a>
+        <p class="karte__fuss mass">Kartendaten: OpenStreetMap-Mitwirkende</p>
+      </div>
+    </div>
+  </section>
+</Basis>
+
+<style>
+  /* ============ Planblatt ============ */
+  .blatt {
+    border-bottom: 1px solid var(--linie);
+    padding-block: clamp(1.75rem, 4vw, 2.75rem) clamp(2.25rem, 5vw, 3.5rem);
+  }
+  .blatt__inhalt { position: relative; z-index: 1; display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
+
+  /* Ab Tablet: Titelblock links, Zeichnung rechts, Legende darunter —
+     wie die Aufteilung eines Zeichnungsblattes. */
+  @media (min-width: 62rem) {
+    .blatt__inhalt {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      grid-template-areas: 'kopf zeichnung' 'legende legende';
+      column-gap: clamp(2rem, 4vw, 3.5rem);
+      row-gap: 2rem;
+      align-items: center;
+    }
+    .schriftfeld { grid-area: kopf; align-self: center; }
+    .blatt__inhalt :global(.schnitt__zeichnung) { grid-area: zeichnung; }
+    .blatt__inhalt :global(.schnitt__legende) {
+      grid-area: legende;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .schriftfeld { max-width: 44rem; }
+  .schriftfeld h1 {
+    margin-top: 1rem;
+    font-size: clamp(2.35rem, 1.5rem + 3.4vw, 3.9rem);
+    line-height: 1.02;
+    letter-spacing: -.032em;
+  }
+  .schriftfeld__betont { color: var(--navy); }
+  .schriftfeld__text {
+    margin-top: 1.25rem;
+    max-width: 38rem;
+    font-size: clamp(1.0625rem, 1rem + .35vw, 1.25rem);
+    color: var(--ink-2);
+  }
+  .schriftfeld__wege {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .7rem;
+    margin-top: 1.75rem;
+  }
+  .schriftfeld__wege .knopf { flex: 1 1 13rem; }
+  @media (min-width: 34rem) { .schriftfeld__wege .knopf { flex: 0 0 auto; } }
+  .schriftfeld__hinweis { display: block; margin-top: 1.1rem; }
+
+  /* ============ Störung ============ */
+  .stoerung {
+    background: var(--navy);
+    color: var(--auf-navy);
+  }
+  .stoerung__inhalt {
+    display: grid;
+    gap: 1rem;
+    align-items: center;
+    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+  }
+  @media (min-width: 52rem) {
+    .stoerung__inhalt { grid-template-columns: auto minmax(0, 1fr) auto; gap: 1.5rem; }
+  }
+  .stoerung__zeichen {
+    display: grid; place-items: center;
+    width: 3rem; height: 3rem;
+    border: 1px solid color-mix(in srgb, var(--auf-navy) 35%, transparent);
+    border-radius: var(--r-2);
+    color: var(--auf-navy);
+  }
+  .stoerung__text h2 {
+    color: var(--weiss);
+    font-size: clamp(1.15rem, 1rem + .8vw, 1.5rem);
+  }
+  .stoerung__text p {
+    margin-top: .4rem;
+    color: var(--auf-navy-2);
+    font-size: .9375rem;
+    max-width: 46rem;
+  }
+  .stoerung__ruf {
+    --knopf-bg: var(--weiss);
+    --knopf-fg: var(--navy);
+    --knopf-rand: var(--weiss);
+    justify-self: start;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+  .stoerung__ruf:hover { --knopf-bg: var(--auf-navy); --knopf-rand: var(--auf-navy); color: var(--navy); }
+
+  /* ============ Betrieb ============ */
+  .betrieb__gitter { display: grid; gap: clamp(1.75rem, 4vw, 3rem); }
+  @media (min-width: 62rem) {
+    .betrieb__gitter { grid-template-columns: 1fr 1fr; align-items: center; gap: 3.5rem; }
+  }
+  .betrieb__bild { margin: 0; }
+  .betrieb__bild img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--r-3);
+    border: 1px solid var(--linie);
+  }
+  .betrieb__bild figcaption { margin-top: .6rem; }
+  .betrieb__text h2 {
+    margin-top: .9rem;
+    font-size: clamp(1.7rem, 1.2rem + 2.1vw, 2.6rem);
+  }
+  .betrieb__text > p { margin-top: 1rem; color: var(--ink-2); max-width: 36rem; }
+
+  .merkmale {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--linie);
+  }
+  .merkmale > div { display: grid; gap: .15rem; }
+  .merkmale dt {
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .merkmale dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: clamp(1rem, .9rem + .5vw, 1.2rem);
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .merkmale__quelle { margin-top: .6rem; }
+  .betrieb__text .knopf { margin-top: 1.5rem; }
+
+  /* ============ Ablauf ============ */
+  .ablauf__kette {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--linie);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-3);
+    overflow: hidden;
+  }
+  @media (min-width: 46rem) { .ablauf__kette { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 72rem) { .ablauf__kette { grid-template-columns: repeat(4, 1fr); } }
+
+  .stufe {
+    display: grid;
+    gap: .5rem;
+    align-content: start;
+    padding: 1.5rem 1.25rem 1.75rem;
+    background: var(--weiss);
+  }
+  .stufe__nummer { color: var(--linie-stark); font-size: .8125rem; }
+  .stufe__zeichen {
+    display: grid; place-items: center;
+    width: 2.5rem; height: 2.5rem;
+    margin-top: .3rem;
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .stufe h3 { margin-top: .5rem; font-size: 1.1875rem; }
+  .stufe p { font-size: .9375rem; color: var(--ink-2); line-height: 1.6; }
+
+  /* ============ Mannschaft ============ */
+  .reihe {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0 var(--spur) .5rem;
+    margin-inline: calc(var(--spur) * -1);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 8.5rem;
+    gap: .75rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  @media (min-width: 62rem) {
+    .reihe {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-columns: auto;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      gap: 1rem;
+    }
+  }
+  .kopfbild {
+    scroll-snap-align: start;
+    display: grid;
+    gap: .1rem;
+  }
+  .kopfbild img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: var(--r-2);
+    border: 1px solid var(--linie);
+    background: var(--papier-2);
+    /* Ruhiger Auftritt: die Porträts sind unterschiedlich belichtet. */
+    filter: saturate(.92) contrast(1.02);
+  }
+  .kopfbild__name {
+    margin-top: .55rem;
+    font-family: var(--f-display);
+    font-size: .9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .kopfbild__rolle { font-size: .625rem; }
+  .mannschaft__mehr { margin-top: 1.75rem; }
+
+  /* ============ Termin ============ */
+  .termin-flaeche { background: var(--papier-2); border-block: 1px solid var(--linie); }
+
+  /* ============ Standort ============ */
+  .standort__gitter { display: grid; gap: clamp(1.75rem, 4vw, 2.75rem); }
+  @media (min-width: 62rem) {
+    .standort__gitter { grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; }
+  }
+  .standort__gitter h2 { margin-top: .9rem; font-size: clamp(1.7rem, 1.2rem + 2.1vw, 2.5rem); }
+  .standort__text { margin-top: 1rem; color: var(--ink-2); max-width: 34rem; }
+
+  .standort__daten {
+    display: grid;
+    gap: 1rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--linie);
+  }
+  @media (min-width: 34rem) { .standort__daten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .standort__daten > div { display: grid; gap: .25rem; }
+  .standort__daten dt {
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .standort__daten dd { margin: 0; font-size: .9375rem; font-weight: 600; line-height: 1.5; }
+  .standort__wege { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.75rem; }
+
+  .karte { display: grid; gap: .55rem; }
+  .karte__bild {
+    position: relative;
+    display: block;
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-3);
+    overflow: hidden;
+    transition: border-color var(--t-kurz) var(--e-aus), box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .karte__bild img { width: 100%; aspect-ratio: 1200 / 615; object-fit: cover; }
+  .karte__bild:hover { border-color: var(--navy); box-shadow: var(--schatten-2); }
+  .karte__marke {
+    position: absolute;
+    right: .75rem; bottom: .75rem;
+    display: inline-flex; align-items: center;
+    min-height: 2.5rem; padding-inline: .9rem;
+    background: var(--navy); color: var(--weiss);
+    border-radius: var(--r-2);
+    font-size: .875rem; font-weight: 600;
+    box-shadow: var(--schatten-2);
+  }
+</style>

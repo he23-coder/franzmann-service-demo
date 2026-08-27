@@ -1,0 +1,119 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import { team } from '@/data/team';
+import { business } from '@/data/business';
+
+const gruppen = [
+  { id: 'leitung', titel: 'Leitung und Büro', text: 'Ihre ersten Ansprechpartner — für Beratung, Planung und alles Kaufmännische.' },
+  { id: 'kundendienst', titel: 'Kundendienst', text: 'Sie kommen, wenn eine Anlage gewartet werden muss oder nicht so läuft, wie sie soll.' },
+  { id: 'montage', titel: 'Montage', text: 'Sie bauen ein, was geplant wurde — im Keller, im Bad und auf dem Dach.' },
+  { id: 'ausbildung', titel: 'Ausbildung', text: 'Nachwuchs im eigenen Betrieb, von den eigenen Leuten angelernt.' },
+] as const;
+---
+<Basis
+  titel="Der Betrieb — Hermann Franzmann GmbH, Weinheim"
+  beschreibung={`Die ${team.length} Menschen hinter Franzmann Bad und Heizung in Weinheim: Leitung, Kundendienst, Montage und Ausbildung.`}
+>
+  <section class="teamkopf plan-raster">
+    <div class="schacht teamkopf__inhalt">
+      <p class="pos">Der Betrieb</p>
+      <h1>Dieselben Leute, von der Beratung bis zur Wartung</h1>
+      <p class="teamkopf__text">
+        {business.ownStatements.philosophy} Bei uns plant, baut und wartet dieselbe
+        Mannschaft — deshalb weiß beim zweiten Besuch noch jemand, wie die Anlage
+        aufgebaut ist.
+      </p>
+    </div>
+  </section>
+
+  <section class="abschnitt">
+    <div class="schacht leitwort" data-auftritt>
+      <blockquote>
+        <p>„{business.ownStatements.satisfaction}"</p>
+        <footer><span>Jens Thron</span> <span class="mass">Geschäftsführer</span></footer>
+      </blockquote>
+    </div>
+  </section>
+
+  {gruppen.map((g) => {
+    const leute = team.filter((m) => m.group === g.id);
+    if (leute.length === 0) return null;
+    return (
+      <section class="abschnitt abschnitt--eng" aria-labelledby={`g-${g.id}`}>
+        <div class="schacht">
+          <div class="gruppenkopf" data-auftritt>
+            <h2 id={`g-${g.id}`}>{g.titel}</h2>
+            <p>{g.text}</p>
+            <span class="mass">{leute.length} {leute.length === 1 ? 'Person' : 'Personen'}</span>
+          </div>
+          <ul class="tafel">
+            {leute.map((m, i) => (
+              <li data-auftritt data-verzug={i * 60}>
+                <img src={m.photo} width="560" height="700" loading="lazy" decoding="async"
+                     alt={`${m.name}, ${m.role}`} />
+                <span class="tafel__name">{m.name}</span>
+                <span class="tafel__rolle mass">{m.role}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  })}
+</Basis>
+
+<style>
+  .teamkopf { border-bottom: 1px solid var(--linie); padding-block: clamp(2rem, 5vw, 3rem); }
+  .teamkopf__inhalt { position: relative; z-index: 1; max-width: 46rem; }
+  .teamkopf h1 { margin-top: 1rem; font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.5rem); letter-spacing: -.03em; }
+  .teamkopf__text { margin-top: 1rem; font-size: 1.0625rem; color: var(--ink-2); max-width: 40rem; }
+
+  .leitwort blockquote {
+    margin: 0;
+    padding: clamp(1.25rem, 3vw, 2rem) 0;
+    border-block: 1px solid var(--linie);
+    max-width: 52rem;
+  }
+  .leitwort p {
+    font-family: var(--f-display);
+    font-size: clamp(1.35rem, 1rem + 1.8vw, 2.1rem);
+    line-height: 1.28;
+    letter-spacing: -.02em;
+    color: var(--navy);
+  }
+  .leitwort footer { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .1rem 1rem; align-items: baseline; }
+  .leitwort footer span:first-child { font-weight: 600; }
+
+  .gruppenkopf { display: grid; gap: .4rem; margin-bottom: 1.5rem; }
+  .gruppenkopf h2 { font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.85rem); }
+  .gruppenkopf p { color: var(--ink-2); max-width: 42rem; font-size: .9375rem; }
+
+  .tafel {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem .75rem;
+  }
+  @media (min-width: 40rem) { .tafel { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 62rem) { .tafel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem 1rem; } }
+
+  .tafel li { display: grid; gap: .1rem; }
+  .tafel img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    filter: saturate(.92) contrast(1.02);
+  }
+  .tafel__name {
+    margin-top: .6rem;
+    font-family: var(--f-display);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .tafel__rolle { font-size: .625rem; }
+</style>

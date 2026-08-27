@@ -1,0 +1,35 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import { services } from '@/data/services';
+import { business } from '@/data/business';
+---
+<Basis titel="Seite nicht gefunden — Franzmann Bad und Heizung"
+       beschreibung="Diese Seite gibt es nicht. Hier finden Sie die Bereiche und den direkten Kontakt.">
+  <section class="fehlerseite plan-raster">
+    <div class="schacht fehlerseite__inhalt">
+      <p class="pos">Fehler 404</p>
+      <h1>Diese Seite gibt es nicht</h1>
+      <p class="fehlerseite__text">
+        Vielleicht hat sich die Adresse geändert. Hier geht es weiter — oder rufen Sie
+        einfach an: <a href={business.phone.href}>{business.phone.display}</a>.
+      </p>
+      <ul class="fehlerseite__wege">
+        <li><a class="knopf knopf--handlung" href="/">Zur Startseite</a></li>
+        {services.map((s) => (
+          <li><a class="knopf knopf--leer" href={`/leistungen/${s.slug}`}>{s.name}</a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Basis>
+
+<style>
+  .fehlerseite { padding-block: clamp(3rem, 9vw, 6rem); }
+  .fehlerseite__inhalt { position: relative; z-index: 1; max-width: 42rem; }
+  .fehlerseite h1 { margin-top: 1rem; font-size: clamp(2rem, 1.4rem + 2.8vw, 3.25rem); }
+  .fehlerseite__text { margin-top: 1rem; color: var(--ink-2); font-size: 1.0625rem; }
+  .fehlerseite__wege {
+    list-style: none; margin: 2rem 0 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: .6rem;
+  }
+</style>

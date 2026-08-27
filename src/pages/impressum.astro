@@ -1,0 +1,68 @@
+---
+import Rechtstext from '@/layouts/Rechtstext.astro';
+import { business } from '@/data/business';
+---
+<Rechtstext
+  titel="Impressum — Hermann Franzmann GmbH"
+  beschreibung="Impressum und Anbieterkennzeichnung der Hermann Franzmann GmbH, Weinheim."
+  ueberschrift="Impressum"
+>
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <address>
+    {business.legalName}<br />
+    {business.address.street}<br />
+    {business.address.postalCode} {business.address.city}
+  </address>
+
+  <h2>Kontakt</h2>
+  <dl>
+    <div><dt>Telefon</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+    <div><dt>Telefax</dt><dd>{business.fax.display}</dd></div>
+    <div><dt>E-Mail</dt><dd><a href={`mailto:${business.email}`}>{business.email}</a></dd></div>
+  </dl>
+
+  <h2>Vertretung</h2>
+  <dl>
+    <div><dt>Geschäftsführer</dt><dd>{business.legal.managingDirector}</dd></div>
+  </dl>
+
+  <h2>Register und Steuer</h2>
+  <dl>
+    <div><dt>Handelsregister</dt><dd>{business.legal.register}</dd></div>
+    <div><dt>Registergericht</dt><dd>{business.legal.court}</dd></div>
+    <div><dt>Gerichtsstand</dt><dd>{business.legal.jurisdiction}</dd></div>
+    <div><dt>Steuernummer</dt><dd>{business.legal.taxNumber}</dd></div>
+  </dl>
+
+  <h2>Berufsrechtliche Angaben</h2>
+  <dl>
+    <div><dt>Aufsichtsbehörde</dt><dd>{business.legal.supervisoryAuthority}</dd></div>
+    <div><dt>Registereintrag</dt><dd>{business.legal.registryEntry}</dd></div>
+    <div><dt>Geltungsraum der Versicherung</dt><dd>{business.legal.insuranceScope}</dd></div>
+  </dl>
+  <p>
+    Es gelten die berufsrechtlichen Regelungen der Handwerksordnung (HwO), einsehbar
+    über die {business.legal.supervisoryAuthority}. Berufsbezeichnung verliehen in
+    der Bundesrepublik Deutschland.
+  </p>
+
+  <h2>Streitbeilegung</h2>
+  <p>
+    Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor
+    einer Verbraucherschlichtungsstelle teilzunehmen.
+  </p>
+
+  <h2>Haftung für Inhalte und Links</h2>
+  <p>
+    Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den
+    allgemeinen Gesetzen verantwortlich. Wir sind jedoch nicht verpflichtet,
+    übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach
+    Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+  </p>
+  <p>
+    Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir
+    keinen Einfluss haben. Für diese fremden Inhalte ist stets der jeweilige Anbieter
+    verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entfernen wir derartige
+    Links umgehend.
+  </p>
+</Rechtstext>

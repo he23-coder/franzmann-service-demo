@@ -1,0 +1,187 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import Piktogramm from '@/components/Piktogramm.astro';
+import { business, routeUrl } from '@/data/business';
+---
+<Basis
+  titel="Kontakt und Anfahrt — Franzmann Bad und Heizung, Weinheim"
+  beschreibung="So erreichen Sie die Hermann Franzmann GmbH in Weinheim: Telefon, E-Mail, Bürozeiten und Anfahrt zur Münzgasse in der Altstadt."
+>
+  <section class="kontaktkopf plan-raster">
+    <div class="schacht kontaktkopf__inhalt">
+      <p class="pos">Kontakt</p>
+      <h1>Am schnellsten geht es mit einem Anruf</h1>
+      <p class="kontaktkopf__text">
+        {business.officeHours.days} zwischen {business.officeHours.from} und
+        {' '}{business.officeHours.to} Uhr ist das Büro besetzt. Außerhalb dieser Zeiten
+        schreiben Sie uns oder nutzen Sie den Termin-Assistenten.
+      </p>
+    </div>
+  </section>
+
+  <section class="abschnitt">
+    <div class="schacht">
+      <ul class="wege">
+        {[
+          { p: 'notdienst', t: 'Telefon', w: business.phone.display, h: business.phone.href, x: 'Auch bei Störungen und dringenden Fällen.', k: 'Anrufen' },
+          { p: 'beratung', t: 'E-Mail', w: business.email, h: `mailto:${business.email}`, x: 'Wir antworten zu den Bürozeiten.', k: 'Schreiben' },
+          { p: 'wartung', t: 'Termin-Assistent', w: 'In drei Schritten', h: '/termin', x: 'Leistung, Wunschtermin, Kontakt — fertig.', k: 'Anfragen' },
+        ].map((w) => (
+          <li>
+            <a class="weg" href={w.h}>
+              <span class="weg__zeichen"><Piktogramm name={w.p as any} size={26} /></span>
+              <span class="weg__inhalt">
+                <span class="mass">{w.t}</span>
+                <strong>{w.w}</strong>
+                <small>{w.x}</small>
+              </span>
+              <span class="weg__marke">{w.k}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="abschnitt anfahrt" aria-labelledby="anfahrt-titel">
+    <div class="schacht anfahrt__gitter">
+      <div data-auftritt>
+        <p class="pos">Anfahrt</p>
+        <h2 id="anfahrt-titel">Münzgasse, Weinheimer Altstadt</h2>
+        <p class="anfahrt__text">
+          Die Werkstatt liegt im {business.address.quarter} — an der Sandsteinfassade
+          mit den blauen Läden und dem Rundbogentor. Die Gassen ringsum sind eng und
+          gepflastert; wenn Sie mit dem Auto kommen, planen Sie ein paar Minuten Fußweg
+          von einem der Parkplätze in der Innenstadt ein.
+        </p>
+
+        <dl class="anfahrt__daten">
+          <div><dt>Adresse</dt><dd>{business.address.street}<br />{business.address.postalCode} {business.address.city}</dd></div>
+          <div><dt>Bürozeiten</dt><dd>{business.officeHours.days}<br />{business.officeHours.from} – {business.officeHours.to} Uhr</dd></div>
+          <div><dt>Telefon</dt><dd><a href={business.phone.href}>{business.phone.display}</a></dd></div>
+          <div><dt>Telefax</dt><dd>{business.fax.display}</dd></div>
+        </dl>
+
+        <a class="knopf knopf--handlung anfahrt__knopf" href={routeUrl}
+           target="_blank" rel="noopener noreferrer">Route berechnen</a>
+      </div>
+
+      <div class="karte" data-auftritt="seite">
+        <a class="karte__bild" href={routeUrl} target="_blank" rel="noopener noreferrer">
+          <img src="/bilder/karte-muenzgasse.webp"
+               srcset="/bilder/karte-muenzgasse-700.webp 700w, /bilder/karte-muenzgasse.webp 1200w"
+               sizes="(min-width: 62rem) 44vw, 92vw"
+               width="1200" height="615" loading="lazy" decoding="async"
+               alt="Kartenausschnitt der Weinheimer Altstadt mit markiertem Standort in der Münzgasse" />
+          <span class="karte__marke">Route berechnen</span>
+        </a>
+        <p class="karte__fuss mass">Kartendaten: OpenStreetMap-Mitwirkende</p>
+        <figure class="anfahrt__bild">
+          <img src="/bilder/betrieb-muenzgasse.webp"
+               srcset="/bilder/betrieb-muenzgasse-800.webp 800w, /bilder/betrieb-muenzgasse.webp 1600w"
+               sizes="(min-width: 62rem) 44vw, 92vw"
+               width="1600" height="1067" loading="lazy" decoding="async"
+               alt="Das Betriebsgebäude: Sandsteinfassade mit blauen Fensterläden, Rundbogentor und Schaufenster" />
+          <figcaption class="mass">Daran erkennen Sie uns</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+</Basis>
+
+<style>
+  .kontaktkopf { border-bottom: 1px solid var(--linie); padding-block: clamp(2rem, 5vw, 3rem); }
+  .kontaktkopf__inhalt { position: relative; z-index: 1; max-width: 44rem; }
+  .kontaktkopf h1 { margin-top: 1rem; font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.5rem); letter-spacing: -.03em; }
+  .kontaktkopf__text { margin-top: 1rem; font-size: 1.0625rem; color: var(--ink-2); }
+
+  .wege { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+  @media (min-width: 52rem) { .wege { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .weg {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: .5rem 1rem;
+    height: 100%;
+    padding: 1.25rem;
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-3);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color var(--t-kurz) var(--e-aus), box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .weg:hover { border-color: var(--navy); box-shadow: var(--schatten-2); color: var(--ink); }
+  .weg__zeichen {
+    display: grid; place-items: center;
+    width: 3rem; height: 3rem;
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .weg__inhalt { display: grid; gap: .15rem; align-content: start; min-width: 0; }
+  .weg__inhalt strong {
+    font-family: var(--f-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .weg__inhalt small { font-size: .8125rem; color: var(--ink-2); }
+  .weg__marke {
+    grid-column: 2;
+    margin-top: .6rem;
+    justify-self: start;
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--azure-text);
+  }
+
+  .anfahrt { background: var(--papier-2); border-top: 1px solid var(--linie); }
+  .anfahrt__gitter { display: grid; gap: clamp(1.75rem, 4vw, 3rem); }
+  @media (min-width: 62rem) { .anfahrt__gitter { grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; } }
+  .anfahrt h2 { margin-top: .9rem; font-size: clamp(1.7rem, 1.2rem + 2vw, 2.4rem); }
+  .anfahrt__text { margin-top: 1rem; color: var(--ink-2); max-width: 34rem; }
+  .anfahrt__daten {
+    display: grid; gap: 1rem;
+    margin: 1.75rem 0 0; padding-top: 1.5rem;
+    border-top: 1px solid var(--linie);
+  }
+  @media (min-width: 34rem) { .anfahrt__daten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .anfahrt__daten > div { display: grid; gap: .25rem; }
+  .anfahrt__daten dt {
+    font-family: var(--f-mono); font-size: .625rem; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .anfahrt__daten dd { margin: 0; font-size: .9375rem; font-weight: 600; line-height: 1.5; }
+  .anfahrt__knopf { margin-top: 1.75rem; }
+
+  .karte { display: grid; gap: .55rem; }
+  .karte__bild {
+    position: relative;
+    display: block;
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-3);
+    overflow: hidden;
+    transition: border-color var(--t-kurz) var(--e-aus), box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .karte__bild img { width: 100%; aspect-ratio: 1200 / 615; object-fit: cover; }
+  .karte__bild:hover { border-color: var(--navy); box-shadow: var(--schatten-2); }
+  .karte__marke {
+    position: absolute;
+    right: .75rem; bottom: .75rem;
+    display: inline-flex; align-items: center;
+    min-height: 2.5rem; padding-inline: .9rem;
+    background: var(--navy); color: var(--weiss);
+    border-radius: var(--r-2);
+    font-size: .875rem; font-weight: 600;
+    box-shadow: var(--schatten-2);
+  }
+  .anfahrt__bild { margin: .75rem 0 0; }
+  .anfahrt__bild img {
+    width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
+    border: 1px solid var(--linie); border-radius: var(--r-3);
+  }
+  .anfahrt__bild figcaption { margin-top: .5rem; }
+</style>

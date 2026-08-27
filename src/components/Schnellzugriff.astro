@@ -1,0 +1,147 @@
+---
+/**
+ * Schwebende Schaltfläche unten rechts. Aufgeklappt zeigt sie die vier Wege,
+ * die Besucher tatsächlich brauchen. Bewusst kein breiter Balken über die
+ * gesamte Bildschirmbreite — der Inhalt bleibt sichtbar.
+ */
+import { business, routeUrl } from '@/data/business';
+
+const wege = [
+  { href: business.phone.href, label: 'Anrufen', zusatz: business.phone.display, art: 'ruf' },
+  { href: '/termin', label: 'Termin anfragen', zusatz: 'In drei Schritten', art: 'termin' },
+  { href: `mailto:${business.email}`, label: 'E-Mail schreiben', zusatz: business.email, art: 'mail' },
+  { href: routeUrl, label: 'Route berechnen', zusatz: business.address.street, art: 'route' },
+];
+---
+
+<div class="schnell" data-schnellzugriff>
+  <div class="schnell__liste" id="schnell-liste" hidden>
+    {wege.map((w) => (
+      <a class="schnell__weg" href={w.href}
+         target={w.art === 'route' ? '_blank' : undefined}
+         rel={w.art === 'route' ? 'noopener noreferrer' : undefined}>
+        <span class="schnell__zeichen" data-art={w.art}>
+          {w.art === 'ruf' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+          )}
+          {w.art === 'termin' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M9 14.5l2 2 4-4"/></svg>
+          )}
+          {w.art === 'mail' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 6.5 9 6 9-6"/></svg>
+          )}
+          {w.art === 'route' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          )}
+        </span>
+        <span class="schnell__text">
+          <strong>{w.label}</strong>
+          <small>{w.zusatz}</small>
+        </span>
+      </a>
+    ))}
+  </div>
+
+  <button class="schnell__knopf" type="button"
+          aria-expanded="false" aria-controls="schnell-liste"
+          data-schnell-schalter>
+    <span class="schnell__knopf-auf" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+    </span>
+    <span class="schnell__knopf-zu" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </span>
+    <span class="nur-sr" data-schnell-beschriftung>Kontaktmöglichkeiten öffnen</span>
+  </button>
+</div>
+
+<style>
+  .schnell {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .6rem;
+    /* Nur die Schaltflächen fangen Zeiger ab, nicht der leere Bereich darüber. */
+    pointer-events: none;
+  }
+  .schnell > * { pointer-events: auto; }
+
+  .schnell__knopf {
+    display: grid;
+    place-items: center;
+    width: 3.5rem; height: 3.5rem;
+    border: 1px solid var(--navy);
+    border-radius: var(--r-rund);
+    background: var(--navy);
+    color: var(--weiss);
+    cursor: pointer;
+    box-shadow: var(--schatten-3);
+    transition: background var(--t-kurz) var(--e-aus), transform var(--t-kurz) var(--e-aus);
+  }
+  .schnell__knopf:hover { background: #24374f; }
+  .schnell__knopf:active { transform: scale(.95); }
+  .schnell__knopf svg { width: 1.5rem; height: 1.5rem; }
+  .schnell__knopf-zu { display: none; }
+  .schnell__knopf[aria-expanded='true'] .schnell__knopf-auf { display: none; }
+  .schnell__knopf[aria-expanded='true'] .schnell__knopf-zu { display: grid; }
+
+  .schnell__liste {
+    display: grid;
+    gap: .4rem;
+    padding: .5rem;
+    width: min(17.5rem, calc(100vw - 2rem));
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-3);
+    box-shadow: var(--schatten-3);
+    animation: schnell-auf var(--t-mittel) var(--e-aus);
+  }
+  @keyframes schnell-auf {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .schnell__weg {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-height: 3rem;
+    padding: .5rem .6rem;
+    border-radius: var(--r-2);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background var(--t-kurz) var(--e-aus);
+  }
+  .schnell__weg:hover { background: var(--papier-2); color: var(--ink); }
+
+  .schnell__zeichen {
+    display: grid; place-items: center;
+    width: 2.25rem; height: 2.25rem;
+    flex: none;
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .schnell__zeichen[data-art='termin'] { background: var(--medium-wasser-flaeche); color: var(--azure-text); }
+  .schnell__zeichen svg { width: 1.15rem; height: 1.15rem; }
+
+  .schnell__text { display: grid; min-width: 0; }
+  .schnell__text strong { font-size: .9375rem; font-weight: 600; line-height: 1.3; }
+  .schnell__text small {
+    font-size: .75rem; color: var(--ink-3); line-height: 1.3;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .schnell__liste { animation: none; }
+  }
+</style>
+
+<script>
+  import { starteSchnellzugriff } from '@/scripts/schnellzugriff';
+  starteSchnellzugriff();
+</script>

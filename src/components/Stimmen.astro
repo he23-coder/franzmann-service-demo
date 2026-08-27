@@ -1,0 +1,301 @@
+---
+/**
+ * Kundenstimmen als Abnahmeprotokoll.
+ *
+ * Gestalterisch bewusst kein weißes Kärtchen mit gelben Sternen: In diesem
+ * Gewerk endet jede Arbeit mit einem unterschriebenen Protokoll. Genau so
+ * ist die Stimme gesetzt — mit Kopfzeile, Prüfzeilen und Quellenvermerk.
+ *
+ * Das Karussell schaltet sich erst ab zwei Stimmen frei; bei einer einzigen
+ * gäbe es keine Bedienelemente, die etwas bewirken.
+ */
+import { reviews, reviewsAggregate } from '@/data/reviews';
+
+const mehrere = reviews.length > 1;
+---
+
+<section class="stimmen" id="stimmen" aria-labelledby="stimmen-titel" data-stimmen>
+  <div class="stimmen__kopf">
+    <p class="pos">Rückmeldungen</p>
+    <h2 id="stimmen-titel">Was Kundinnen und Kunden berichten</h2>
+    <p class="stimmen__vorspann">
+      Hier steht wörtlich, was öffentlich nachzulesen ist — mit Datum und
+      Quelle, damit Sie es selbst nachprüfen können.
+    </p>
+  </div>
+
+  <div class="protokolle" data-buehne
+       aria-roledescription={mehrere ? 'Karussell' : undefined}
+       aria-label={mehrere ? 'Kundenstimmen' : undefined}>
+    <div class="protokolle__band" data-band>
+      {reviews.map((r, i) => (
+        <article class="protokoll"
+                 data-folie={i}
+                 role={mehrere ? 'group' : undefined}
+                 aria-roledescription={mehrere ? 'Stimme' : undefined}
+                 aria-label={mehrere ? `${i + 1} von ${reviews.length}` : undefined}
+                 aria-hidden={mehrere && i !== 0 ? 'true' : undefined}
+                 hidden={mehrere && i !== 0}>
+          <header class="protokoll__kopf">
+            <span class="mass">Rückmeldung</span>
+            <span class="protokoll__wertung"
+                  aria-label={`Bewertung ${r.rating} von 5`}>
+              <span class="protokoll__balken" aria-hidden="true">
+                {Array.from({ length: 5 }).map((_, n) => (
+                  <span class:list={['protokoll__strich', n < r.rating && 'ist-voll']} />
+                ))}
+              </span>
+              <span class="protokoll__zahl" aria-hidden="true">{r.rating},0</span>
+            </span>
+          </header>
+
+          <blockquote class="protokoll__text"><p>{r.text}</p></blockquote>
+
+          <dl class="protokoll__zeilen">
+            <div><dt>Verfasst von</dt><dd>{r.author}</dd></div>
+            <div><dt>Datum</dt><dd>{r.dateLabel}</dd></div>
+            <div><dt>Quelle</dt><dd>{r.platform}</dd></div>
+          </dl>
+
+          <a class="knopf knopf--leer protokoll__quelle" href={r.sourceUrl}
+             target="_blank" rel="noopener noreferrer">
+            {r.sourceLabel}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 4h6v6M20 4l-9 9M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/>
+            </svg>
+            <span class="nur-sr">— öffnet in neuem Tab</span>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    {mehrere && (
+      <div class="steuerung">
+        <button type="button" class="steuerung__knopf" data-zurueck aria-label="Vorherige Stimme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+
+        <div class="steuerung__punkte" role="tablist" aria-label="Stimme wählen">
+          {reviews.map((_, i) => (
+            <button type="button" class="punkt" role="tab" data-punkt={i}
+                    aria-selected={i === 0 ? 'true' : 'false'}
+                    aria-label={`Stimme ${i + 1} von ${reviews.length}`}>
+              <span aria-hidden="true"></span>
+            </button>
+          ))}
+        </div>
+
+        <button type="button" class="steuerung__knopf" data-halten
+                aria-pressed="false" aria-label="Automatischen Wechsel anhalten">
+          <svg class="zeichen-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.6" height="14" rx="1"/><rect x="13.4" y="5" width="3.6" height="14" rx="1"/></svg>
+          <svg class="zeichen-lauf" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+        </button>
+
+        <button type="button" class="steuerung__knopf" data-weiter aria-label="Nächste Stimme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    )}
+    <p class="nur-sr" aria-live="polite" data-ansage></p>
+  </div>
+
+  <aside class="stimmen__aufruf">
+    <p class="stimmen__gesamt">
+      <strong>{reviewsAggregate.ratingValue.toLocaleString('de-DE', { minimumFractionDigits: 1 })}</strong>
+      von 5 · {reviewsAggregate.reviewCount}
+      {reviewsAggregate.reviewCount === 1 ? ' Bewertung' : ' Bewertungen'}
+      <span class="mass">Quelle: {reviewsAggregate.platform}</span>
+    </p>
+    <p>Sie waren Kunde bei uns? Eine kurze Rückmeldung hilft anderen bei der Entscheidung.</p>
+    <a class="knopf knopf--handlung" href={reviewsAggregate.writeReviewUrl}
+       target="_blank" rel="noopener noreferrer">
+      Bewertung schreiben
+      <span class="nur-sr">bei {reviewsAggregate.platform} — öffnet in neuem Tab</span>
+    </a>
+  </aside>
+</section>
+
+<style>
+  .stimmen { display: grid; gap: 1.75rem; }
+  @media (min-width: 66rem) {
+    .stimmen {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      grid-template-areas: 'kopf kopf' 'buehne aufruf';
+      column-gap: 2.5rem;
+      align-items: start;
+    }
+    .stimmen__kopf { grid-area: kopf; }
+    .protokolle { grid-area: buehne; }
+    .stimmen__aufruf { grid-area: aufruf; }
+  }
+
+  .stimmen__kopf h2 {
+    font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+    margin-top: .9rem;
+  }
+  .stimmen__vorspann { margin-top: .9rem; max-width: 40rem; color: var(--ink-2); }
+
+  /* --- Bühne --- */
+  .protokolle { position: relative; min-width: 0; }
+  .protokolle__band { position: relative; }
+
+  /* Das Protokoll: Kopfzeile, Text, Prüfzeilen, Quelle. */
+  .protokoll {
+    display: grid;
+    gap: 1.1rem;
+    padding: clamp(1.1rem, 3vw, 1.75rem);
+    background:
+      repeating-linear-gradient(
+        transparent 0 1.85rem,
+        color-mix(in srgb, var(--navy) 6%, transparent) 1.85rem 1.9rem
+      ),
+      var(--weiss);
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-2);
+    /* Angeschnittene Ecke wie bei einem abgehefteten Formular */
+    clip-path: polygon(0 0, calc(100% - 1.4rem) 0, 100% 1.4rem, 100% 100%, 0 100%);
+    animation: protokoll-ein var(--t-mittel) var(--e-aus);
+  }
+  @keyframes protokoll-ein {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .protokoll__kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid var(--linie);
+  }
+
+  .protokoll__wertung { display: inline-flex; align-items: center; gap: .55rem; }
+  .protokoll__balken { display: inline-flex; gap: 3px; }
+  /* Bewertung als Skala, nicht als Sterne — und nie nur über Farbe:
+     die Zahl daneben nennt den Wert ausdrücklich. */
+  .protokoll__strich {
+    width: 12px; height: 5px;
+    border-radius: 1px;
+    background: var(--linie);
+  }
+  .protokoll__strich.ist-voll { background: var(--navy); }
+  .protokoll__zahl {
+    font-family: var(--f-mono);
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .protokoll__text { margin: 0; }
+  .protokoll__text p {
+    font-family: var(--f-display);
+    font-size: clamp(1.0625rem, .98rem + .45vw, 1.3125rem);
+    line-height: 1.5;
+    letter-spacing: -.008em;
+    color: var(--ink);
+  }
+
+  .protokoll__zeilen {
+    margin: 0;
+    display: grid;
+    gap: .5rem;
+    padding-top: .9rem;
+    border-top: 1px dashed var(--linie-stark);
+  }
+  @media (min-width: 40rem) {
+    .protokoll__zeilen { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  }
+  .protokoll__zeilen > div { display: grid; gap: .1rem; }
+  .protokoll__zeilen dt {
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .protokoll__zeilen dd { margin: 0; font-size: .875rem; font-weight: 600; }
+
+  .protokoll__quelle { justify-self: start; min-height: 2.75rem; padding: .6rem 1rem; font-size: .875rem; }
+
+  /* --- Steuerung --- */
+  .steuerung {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin-top: 1rem;
+  }
+  .steuerung__knopf {
+    display: grid;
+    place-items: center;
+    width: 2.75rem; height: 2.75rem;
+    background: var(--weiss);
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-2);
+    color: var(--navy);
+    cursor: pointer;
+    transition: background var(--t-kurz) var(--e-aus), border-color var(--t-kurz) var(--e-aus);
+  }
+  .steuerung__knopf:hover { background: var(--papier-2); border-color: var(--navy); }
+  .steuerung__knopf:active { transform: scale(.96); }
+  .steuerung__knopf svg { width: 1.15rem; height: 1.15rem; }
+  .zeichen-lauf { display: none; }
+  [data-halten][aria-pressed='true'] .zeichen-pause { display: none; }
+  [data-halten][aria-pressed='true'] .zeichen-lauf { display: block; }
+
+  .steuerung__punkte { display: flex; gap: .1rem; margin-inline: .3rem; }
+  .punkt {
+    display: grid;
+    place-items: center;
+    width: 2.75rem; height: 2.75rem;
+    background: none; border: 0; cursor: pointer; padding: 0;
+  }
+  .punkt span {
+    display: block;
+    width: 1.5rem; height: 3px;
+    border-radius: 2px;
+    background: var(--linie-stark);
+    transition: background var(--t-kurz) var(--e-aus), width var(--t-kurz) var(--e-aus);
+  }
+  .punkt:hover span { background: var(--ink-3); }
+  .punkt[aria-selected='true'] span { background: var(--navy); width: 2rem; }
+
+  /* --- Aufruf --- */
+  .stimmen__aufruf {
+    display: grid;
+    gap: .9rem;
+    align-content: start;
+    padding: 1.25rem;
+    background: var(--papier-2);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+  }
+  .stimmen__gesamt {
+    display: grid;
+    gap: .2rem;
+    font-size: .9375rem;
+    color: var(--ink-2);
+  }
+  .stimmen__gesamt strong {
+    font-family: var(--f-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stimmen__aufruf p { font-size: .9375rem; color: var(--ink-2); }
+  .stimmen__aufruf .knopf { justify-self: start; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .protokoll { animation: none; }
+    .steuerung__knopf:active { transform: none; }
+  }
+</style>
+
+<script>
+  import { starteStimmen } from '@/scripts/stimmen';
+  starteStimmen();
+</script>

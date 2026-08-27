@@ -1,0 +1,370 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import Piktogramm from '@/components/Piktogramm.astro';
+import TerminAssistent from '@/components/TerminAssistent.astro';
+import { services, type Service } from '@/data/services';
+import { business } from '@/data/business';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { dienst: s as Service } }));
+}
+
+const { dienst } = Astro.props as { dienst: Service };
+
+const ebeneText = {
+  dach: 'Auf dem Dach und im Obergeschoss',
+  wohnen: 'Im Wohngeschoss',
+  keller: 'Im Keller',
+  strang: 'Durch das ganze Haus',
+}[dienst.ebene];
+
+// Fragen und Antworten auch strukturiert ausgeben.
+const faqDaten = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: dienst.faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<Basis
+  titel={`${dienst.name} in Weinheim — ${dienst.teaser.split('—')[0].trim()} | Franzmann`}
+  beschreibung={`${dienst.name} vom Fachbetrieb in Weinheim: ${dienst.teaser} Beratung, Planung und Ausführung aus einer Hand.`}
+  bild={dienst.image.src}
+>
+  <!-- ============ Kopf der Leistung ============ -->
+  <section class="dienst-kopf plan-raster" data-medium={dienst.medium}>
+    <div class="schacht dienst-kopf__gitter">
+      <div class="dienst-kopf__text">
+        <p class="pos">{ebeneText}</p>
+        <h1>{dienst.name}</h1>
+        {dienst.quote && <p class="dienst-kopf__zitat">„{dienst.quote}"</p>}
+        <p class="dienst-kopf__vorspann">{dienst.intro}</p>
+        <div class="dienst-kopf__wege">
+          <a class="knopf knopf--handlung knopf--gross" href="#termin-assistent">Termin anfragen</a>
+          <a class="knopf knopf--leer knopf--gross" href={business.phone.href}>
+            {business.phone.display}
+          </a>
+        </div>
+      </div>
+
+      <figure class="dienst-kopf__bild">
+        <img src={dienst.image.src}
+             srcset={`${dienst.image.src.replace('.webp', '-800.webp')} 800w, ${dienst.image.src} 1400w`}
+             sizes="(min-width: 62rem) 44vw, 92vw"
+             width="1400" height="960" loading="eager" fetchpriority="high" decoding="async"
+             alt={dienst.image.alt} />
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ Was dazugehört ============ -->
+  <section class="abschnitt" aria-labelledby="umfang-titel">
+    <div class="schacht">
+      <div class="abschnitt-kopf" data-auftritt>
+        <p class="pos">Umfang</p>
+        <h2 id="umfang-titel">Was wir in diesem Bereich machen</h2>
+        <p>Wählen Sie das Passende — der Termin-Assistent weiter unten übernimmt Ihre Auswahl.</p>
+      </div>
+
+      <ul class="umfang" data-medium={dienst.medium}>
+        {dienst.subServices.map((sub, i) => (
+          <li data-auftritt data-verzug={i * 70}>
+            <a class="posten" href={`#termin-assistent`} data-waehlt={sub.id}>
+              <span class="posten__zeichen"><Piktogramm name={sub.pictogram} size={26} /></span>
+              <span class="posten__text">
+                <strong>{sub.label}</strong>
+                <small>{sub.note}</small>
+              </span>
+              <span class="posten__hinweis mass">Termin anfragen</span>
+              <svg class="posten__pfeil" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Ablauf ============ -->
+  {dienst.steps && (
+    <section class="abschnitt ablauf-flaeche" aria-labelledby="schritte-titel">
+      <div class="schacht">
+        <div class="abschnitt-kopf" data-auftritt>
+          <p class="pos">Ablauf</p>
+          <h2 id="schritte-titel">
+            {dienst.slug === 'bad' ? 'Der Weg zu Ihrem Traumbad' : 'Der Weg zu gutem Klima'}
+          </h2>
+        </div>
+        <ol class="wegkette">
+          {dienst.steps!.map((st, i) => (
+            <li data-auftritt data-verzug={i * 60}>
+              <span class="wegkette__nr mass">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{st.title}</h3>
+                <p>{st.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ Fragen ============ -->
+  <section class="abschnitt" aria-labelledby="fragen-titel">
+    <div class="schacht fragen__gitter">
+      <div class="abschnitt-kopf" data-auftritt>
+        <p class="pos">Häufige Fragen</p>
+        <h2 id="fragen-titel">Was Kundinnen und Kunden uns oft fragen</h2>
+        <p>
+          Ist Ihre Frage nicht dabei? Rufen Sie an — {business.officeHours.days},
+          {' '}{business.officeHours.from} bis {business.officeHours.to} Uhr.
+        </p>
+      </div>
+
+      <div class="fragen">
+        {dienst.faq.map((f) => (
+          <details class="frage">
+            <summary>
+              <span>{f.q}</span>
+              <span class="frage__zeichen" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round"><path d="M6 9.5l6 6 6-6"/></svg>
+              </span>
+            </summary>
+            <div class="frage__antwort"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqDaten)} />
+
+  <!-- ============ Termin, direkt hier ============ -->
+  <section class="abschnitt termin-flaeche" id="termin">
+    <div class="schacht">
+      <TerminAssistent
+        bereich={dienst.slug}
+        ueberschrift={`Termin für ${dienst.name} anfragen`}
+      />
+    </div>
+  </section>
+</Basis>
+
+<style>
+  /* ============ Kopf ============ */
+  .dienst-kopf {
+    border-bottom: 1px solid var(--linie);
+    padding-block: clamp(2rem, 5vw, 3.25rem) clamp(2.25rem, 5vw, 3.5rem);
+  }
+  .dienst-kopf__gitter {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+  @media (min-width: 62rem) {
+    .dienst-kopf__gitter { grid-template-columns: 1fr 1fr; align-items: center; gap: 3.5rem; }
+  }
+
+  .dienst-kopf h1 {
+    margin-top: 1rem;
+    font-size: clamp(2.5rem, 1.6rem + 4vw, 4.25rem);
+    letter-spacing: -.035em;
+  }
+  .dienst-kopf__zitat {
+    margin-top: 1rem;
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + .8vw, 1.5rem);
+    line-height: 1.35;
+    color: var(--navy);
+    max-width: 30rem;
+  }
+  .dienst-kopf[data-medium='waerme']  .dienst-kopf__zitat { color: var(--medium-waerme); }
+  .dienst-kopf[data-medium='wasser']  .dienst-kopf__zitat { color: var(--medium-wasser); }
+  .dienst-kopf[data-medium='luft']    .dienst-kopf__zitat { color: var(--medium-luft); }
+  .dienst-kopf[data-medium='service'] .dienst-kopf__zitat { color: var(--medium-service); }
+
+  .dienst-kopf__vorspann {
+    margin-top: 1.15rem;
+    max-width: 36rem;
+    font-size: clamp(1rem, .96rem + .3vw, 1.125rem);
+    color: var(--ink-2);
+  }
+  .dienst-kopf__wege { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.75rem; }
+  .dienst-kopf__wege .knopf { flex: 1 1 13rem; }
+  @media (min-width: 34rem) { .dienst-kopf__wege .knopf { flex: 0 0 auto; } }
+
+  .dienst-kopf__bild { margin: 0; }
+  .dienst-kopf__bild img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--r-3);
+    border: 1px solid var(--linie);
+  }
+
+  /* ============ Umfang ============ */
+  .umfang {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: .6rem;
+  }
+  @media (min-width: 46rem) { .umfang { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .posten {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: .5rem .9rem;
+    min-height: 4.5rem;
+    padding: 1rem;
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color var(--t-kurz) var(--e-aus),
+                box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .posten:hover, .posten:focus-visible {
+    border-color: var(--navy);
+    box-shadow: var(--schatten-2);
+    color: var(--ink);
+  }
+  .posten:hover .posten__pfeil { transform: translateX(3px); }
+
+  .posten__zeichen {
+    display: grid; place-items: center;
+    width: 2.75rem; height: 2.75rem;
+    grid-row: span 2;
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .umfang[data-medium='waerme']  .posten__zeichen { background: var(--medium-waerme-flaeche);  color: var(--medium-waerme); }
+  .umfang[data-medium='wasser']  .posten__zeichen { background: var(--medium-wasser-flaeche);  color: var(--medium-wasser); }
+  .umfang[data-medium='luft']    .posten__zeichen { background: var(--medium-luft-flaeche);    color: var(--medium-luft); }
+  .umfang[data-medium='service'] .posten__zeichen { background: var(--medium-service-flaeche); color: var(--medium-service); }
+
+  .posten__text { grid-column: 2 / -1; display: grid; gap: .1rem; min-width: 0; }
+  .posten__text strong { font-family: var(--f-display); font-size: 1.0625rem; font-weight: 600; }
+  .posten__text small { font-size: .8125rem; color: var(--ink-2); }
+  .posten__hinweis { grid-column: 2; font-size: .625rem; color: var(--azure-text); }
+  .posten__pfeil { grid-column: 4; grid-row: 2; color: var(--azure-text); transition: transform var(--t-kurz) var(--e-aus); }
+
+  /* ============ Ablauf ============ */
+  .ablauf-flaeche { background: var(--papier-2); border-block: 1px solid var(--linie); }
+  .wegkette {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    counter-reset: schritt;
+  }
+  .wegkette li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--linie);
+  }
+  .wegkette li:last-child { border-bottom: 1px solid var(--linie); }
+  @media (min-width: 52rem) {
+    .wegkette { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 3rem; }
+    .wegkette li:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid var(--linie); }
+  }
+  .wegkette__nr { padding-top: .25rem; color: var(--linie-stark); font-size: .8125rem; }
+  .wegkette h3 { font-size: 1.125rem; }
+  .wegkette p { margin-top: .35rem; font-size: .9375rem; color: var(--ink-2); }
+
+  /* ============ Fragen ============ */
+  .fragen__gitter { display: grid; gap: 2rem; }
+  @media (min-width: 62rem) {
+    .fragen__gitter { grid-template-columns: 22rem minmax(0, 1fr); gap: 3.5rem; align-items: start; }
+  }
+
+  .fragen { display: grid; gap: .5rem; }
+  .frage {
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+    overflow: hidden;
+  }
+  .frage summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    padding: 1rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--f-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink);
+    transition: background var(--t-kurz) var(--e-aus);
+  }
+  .frage summary::-webkit-details-marker { display: none; }
+  .frage summary:hover { background: var(--papier-2); }
+  .frage__zeichen {
+    display: grid; place-items: center;
+    width: 1.75rem; height: 1.75rem;
+    flex: none;
+    border-radius: var(--r-rund);
+    border: 1px solid var(--linie-stark);
+    color: var(--navy);
+    transition: transform var(--t-mittel) var(--e-aus), background var(--t-kurz) var(--e-aus);
+  }
+  .frage__zeichen svg { width: .9rem; height: .9rem; }
+  .frage[open] .frage__zeichen { transform: rotate(180deg); background: var(--papier-2); }
+  .frage__antwort { padding: 0 1.1rem 1.2rem; }
+  .frage__antwort p { color: var(--ink-2); font-size: .9375rem; line-height: 1.65; max-width: 46rem; }
+
+  .termin-flaeche { background: var(--papier-2); border-block: 1px solid var(--linie); }
+</style>
+
+<script>
+  /**
+   * Ein Posten in der Umfangsliste wählt die Leistung im Assistenten aus und
+   * springt dorthin. So bleibt der Zusammenhang erhalten.
+   */
+  document.querySelectorAll<HTMLAnchorElement>('[data-waehlt]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.dataset.waehlt;
+      if (!id) return;
+      const eingabe = document.querySelector<HTMLInputElement>(
+        `[data-leistung-eingabe][value="${id}"]`,
+      );
+      if (!eingabe) return;
+      e.preventDefault();
+
+      const bereich = eingabe.dataset.bereich;
+      const bereichEingabe = document.querySelector<HTMLInputElement>(
+        `[data-bereich-eingabe][value="${bereich}"]`,
+      );
+      if (bereichEingabe && !bereichEingabe.checked) {
+        bereichEingabe.checked = true;
+        bereichEingabe.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      eingabe.checked = true;
+      eingabe.dispatchEvent(new Event('change', { bubbles: true }));
+
+      document.querySelector('#termin-assistent')?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    });
+  });
+</script>

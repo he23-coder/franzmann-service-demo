@@ -1,0 +1,137 @@
+---
+import '@/styles/global.css';
+import Kopf from '@/components/Kopf.astro';
+import Fuss from '@/components/Fuss.astro';
+import Schnellzugriff from '@/components/Schnellzugriff.astro';
+import { business } from '@/data/business';
+import { services } from '@/data/services';
+import { reviews, reviewsAggregate } from '@/data/reviews';
+
+interface Props {
+  titel: string;
+  beschreibung: string;
+  /** Nur auf der Startseite: vollständige LocalBusiness-Daten ausgeben. */
+  hauptseite?: boolean;
+  bild?: string;
+}
+
+const { titel, beschreibung, hauptseite = false, bild = '/bilder/betrieb-muenzgasse.webp' } =
+  Astro.props;
+
+const kanonisch = new URL(Astro.url.pathname, Astro.site).href;
+const bildAbsolut = new URL(bild, Astro.site).href;
+
+const betrieb = {
+  '@context': 'https://schema.org',
+  '@type': 'HVACBusiness',
+  '@id': `${Astro.site}#betrieb`,
+  name: business.legalName,
+  alternateName: `${business.brand} ${business.brandLine}`,
+  description: business.claim,
+  url: Astro.site?.href,
+  telephone: '+4962019033-0'.replace('-', ''),
+  email: business.email,
+  faxNumber: '+496201903315',
+  image: bildAbsolut,
+  logo: new URL('/franzmann-logo.png', Astro.site).href,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: business.address.street,
+    postalCode: business.address.postalCode,
+    addressLocality: business.address.city,
+    addressRegion: business.address.region,
+    addressCountry: business.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: business.geo.lat, longitude: business.geo.lng },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: business.officeHours.schemaDays,
+      opens: business.officeHours.from,
+      closes: business.officeHours.to,
+    },
+  ],
+  areaServed: { '@type': 'City', name: 'Weinheim' },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Leistungen',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.name, description: s.teaser },
+      url: new URL(`/leistungen/${s.slug}`, Astro.site).href,
+    })),
+  },
+  // Bewertungen nur, weil sie mit Quelle belegt sind (siehe docs/source-audit.md).
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: reviewsAggregate.ratingValue,
+    reviewCount: reviewsAggregate.reviewCount,
+    bestRating: 5,
+    worstRating: 1,
+  },
+  review: reviews.map((r) => ({
+    '@type': 'Review',
+    author: { '@type': 'Person', name: r.author },
+    datePublished: r.date,
+    reviewBody: r.text,
+    reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+    publisher: { '@type': 'Organization', name: r.platform },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titel}</title>
+    <meta name="description" content={beschreibung} />
+    <link rel="canonical" href={kanonisch} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="theme-color" content="#faf7f3" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.legalName} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={titel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:url" content={kanonisch} />
+    <meta property="og:image" content={bildAbsolut} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Ohne JavaScript ist alles sofort sichtbar. -->
+    <noscript>
+      <style>[data-auftritt] { opacity: 1 !important; transform: none !important; }</style>
+    </noscript>
+
+    {hauptseite && (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(betrieb)} />
+    )}
+  </head>
+
+  <body>
+    <a class="sprunglink" href="#inhalt">Zum Inhalt springen</a>
+    <Kopf />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <Fuss />
+    <Schnellzugriff />
+
+    <script>
+      import { starteAuftritt } from '@/scripts/auftritt';
+      starteAuftritt();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Der Inhalt beginnt unter der festen Navigation. */
+  main { padding-top: calc(var(--nav-h) + 2.75rem); }
+  @media (min-width: 60rem) { main { padding-top: var(--nav-h); } }
+  @media (max-height: 30rem) and (max-width: 60rem) { main { padding-top: calc(3rem + 2.4rem); } }
+</style>

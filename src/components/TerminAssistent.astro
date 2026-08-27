@@ -1,0 +1,647 @@
+---
+/**
+ * Termin-Assistent in drei Schritten.
+ *
+ * 1 Leistung · 2 Wunschtermin · 3 Kontakt und Prüfen
+ *
+ * Der Assistent steht auf jeder Leistungsseite. Wer dort „Termin anfragen"
+ * wählt, findet den Bereich und die Leistung bereits gesetzt — niemand wird
+ * auf die Startseite zurückgeschickt.
+ *
+ * Die Zusammenfassung im letzten Schritt aktualisiert sich live. Alle
+ * Auswahlmöglichkeiten stammen aus src/data/services.ts, damit Assistent und
+ * Leistungsseiten nie auseinanderlaufen.
+ */
+import Piktogramm from './Piktogramm.astro';
+import { services } from '@/data/services';
+import { business } from '@/data/business';
+
+interface Props {
+  /** Vorauswahl beim Aufruf von einer Leistungsseite. */
+  bereich?: string;
+  leistung?: string;
+  /** Überschriftenebene, damit die Gliederung je Seite stimmt. */
+  ueberschrift?: string;
+  kompakt?: boolean;
+}
+
+const { bereich = '', leistung = '', ueberschrift = 'Termin anfragen', kompakt = false } =
+  Astro.props;
+
+const heute = new Date();
+const minDatum = new Date(heute.getTime() + 86_400_000).toISOString().slice(0, 10);
+---
+
+<section class="assistent" id="termin-assistent"
+         data-assistent
+         data-vor-bereich={bereich}
+         data-vor-leistung={leistung}
+         aria-labelledby="assistent-titel">
+  <div class="assistent__kopf">
+    <p class="pos">Terminanfrage</p>
+    <h2 id="assistent-titel">{ueberschrift}</h2>
+    {!kompakt && (
+      <p class="assistent__vorspann">
+        Sie beschreiben in drei Schritten, worum es geht und wann es Ihnen passt.
+        Wir melden uns zur Bestätigung — der Termin gilt erst, wenn wir ihn Ihnen zugesagt haben.
+      </p>
+    )}
+  </div>
+
+  <!-- Schrittkette: die einzige Fortschrittsanzeige. -->
+  <ol class="kette" data-kette aria-label="Fortschritt">
+    {['Leistung', 'Wunschtermin', 'Kontakt & Prüfen'].map((name, i) => (
+      <li class="kette__glied" data-glied={i + 1} aria-current={i === 0 ? 'step' : undefined}>
+        <span class="kette__zahl">{i + 1}</span>
+        <span class="kette__name">{name}</span>
+      </li>
+    ))}
+  </ol>
+
+  <!-- Kontextleiste: bleibt ab Schritt 2 sichtbar. -->
+  <div class="wahlband" data-wahlband hidden>
+    <span class="wahlband__zeichen" data-wahlband-zeichen></span>
+    <span class="wahlband__text">
+      <span class="mass" data-wahlband-bereich></span>
+      <strong data-wahlband-leistung></strong>
+      <small data-wahlband-notiz></small>
+    </span>
+    <button type="button" class="wahlband__aendern" data-zurueck-zu-eins>Ändern</button>
+  </div>
+
+  <form class="assistent__form" data-termin-form novalidate>
+    <!-- ============ Schritt 1 ============ -->
+    <fieldset class="schritt" data-schritt="1">
+      <legend class="nur-sr">Schritt 1 von 3: Leistung wählen</legend>
+
+      <div class="feld">
+        <span class="feld__marke" id="bereich-marke">Um welchen Bereich geht es?</span>
+        <div class="bereiche" role="radiogroup" aria-labelledby="bereich-marke">
+          {services.map((s) => (
+            <label class="bereich" data-medium={s.medium}>
+              <input type="radio" name="bereich" value={s.slug} class="nur-sr"
+                     data-bereich-eingabe />
+              <span class="bereich__flaeche">
+                <Piktogramm name={s.pictogram} size={26} />
+                <strong>{s.name}</strong>
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div class="feld" data-leistungsfeld hidden>
+        <span class="feld__marke" id="leistung-marke">Welche Leistung passt am besten?</span>
+        <p class="feld__hinweis">Wenn Sie unsicher sind, wählen Sie das Nächstliegende — wir klären den Rest im Gespräch.</p>
+        <div class="wahlgitter" role="radiogroup" aria-labelledby="leistung-marke" data-leistungen>
+          {services.map((s) =>
+            s.subServices.map((sub) => (
+              <label class="wahl" data-gehoert-zu={s.slug} data-medium={s.medium} hidden>
+                <input type="radio" name="leistung" value={sub.id} class="nur-sr"
+                       data-leistung-eingabe
+                       data-bereich={s.slug}
+                       data-bereich-name={s.name}
+                       data-label={sub.label}
+                       data-notiz={sub.note} />
+                <span class="wahl__flaeche">
+                  <span class="wahl__zeichen"><Piktogramm name={sub.pictogram} size={24} /></span>
+                  <span class="wahl__text">
+                    <strong>{sub.label}</strong>
+                    <small>{sub.note}</small>
+                  </span>
+                  <span class="wahl__haken" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                         stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                  </span>
+                </span>
+              </label>
+            )),
+          )}
+        </div>
+      </div>
+
+      <!-- Der Hinweis steht außerhalb der Leistungsliste, damit er auch
+           sichtbar ist, solange noch kein Bereich gewählt wurde. -->
+      <p class="fehlermeldung" data-fehler="leistung" role="alert" hidden></p>
+    </fieldset>
+
+    <!-- ============ Schritt 2 ============ -->
+    <fieldset class="schritt" data-schritt="2" hidden>
+      <legend class="nur-sr">Schritt 2 von 3: Wunschtermin</legend>
+
+      <div class="feld">
+        <span class="feld__marke">Wann passt es Ihnen?</span>
+        <p class="feld__hinweis">
+          Termine vergeben wir zu den Bürozeiten: {business.officeHours.days},
+          {' '}{business.officeHours.from} – {business.officeHours.to} Uhr.
+        </p>
+        <div class="zeitpaar">
+          <div class="eingabe">
+            <label for="wunsch-datum">Wunschdatum</label>
+            <input type="date" id="wunsch-datum" name="wunschDatum" min={minDatum} required />
+          </div>
+          <div class="eingabe">
+            <label for="wunsch-zeit">Uhrzeit</label>
+            <input type="time" id="wunsch-zeit" name="wunschZeit"
+                   min="07:30" max="16:00" step="900" required />
+          </div>
+        </div>
+        <p class="fehlermeldung" data-fehler="wunsch" role="alert" hidden></p>
+      </div>
+
+      <div class="feld">
+        <span class="feld__marke">Ausweichtermin <span class="feld__zusatz">optional</span></span>
+        <p class="feld__hinweis">Zwei Möglichkeiten beschleunigen die Zusage spürbar.</p>
+        <div class="zeitpaar">
+          <div class="eingabe">
+            <label for="alt-datum">Alternatives Datum</label>
+            <input type="date" id="alt-datum" name="altDatum" min={minDatum} />
+          </div>
+          <div class="eingabe">
+            <label for="alt-zeit">Uhrzeit</label>
+            <input type="time" id="alt-zeit" name="altZeit" min="07:30" max="16:00" step="900" />
+          </div>
+        </div>
+      </div>
+
+      <div class="feld">
+        <label class="feld__marke" for="anliegen">Worum geht es genau? <span class="feld__zusatz">optional</span></label>
+        <p class="feld__hinweis">
+          Bei einer Anlage helfen uns Fabrikat, Typ und Baujahr — meist auf dem Typenschild.
+        </p>
+        <textarea id="anliegen" name="anliegen" rows="4"
+                  placeholder="Zum Beispiel: Bestandsanlage von 2009, Warmwasser wird nicht mehr richtig warm."></textarea>
+      </div>
+    </fieldset>
+
+    <!-- ============ Schritt 3 ============ -->
+    <fieldset class="schritt" data-schritt="3" hidden>
+      <legend class="nur-sr">Schritt 3 von 3: Kontakt und Prüfen</legend>
+
+      <div class="dreispalt">
+        <div class="dreispalt__eingaben">
+          <div class="eingabe">
+            <label for="name">Name<span aria-hidden="true"> *</span></label>
+            <input type="text" id="name" name="name" autocomplete="name" required />
+            <p class="fehlermeldung" data-fehler="name" role="alert" hidden></p>
+          </div>
+
+          <div class="eingabe">
+            <label for="email">E-Mail<span aria-hidden="true"> *</span></label>
+            <input type="email" id="email" name="email" autocomplete="email"
+                   inputmode="email" required />
+            <p class="fehlermeldung" data-fehler="email" role="alert" hidden></p>
+          </div>
+
+          <div class="eingabe">
+            <label for="telefon">Telefon <span class="feld__zusatz">optional</span></label>
+            <input type="tel" id="telefon" name="telefon" autocomplete="tel" inputmode="tel" />
+          </div>
+
+          <div class="eingabe">
+            <span class="feld__marke feld__marke--klein" id="rueckweg-marke">Wie sollen wir antworten?</span>
+            <div class="segment" role="radiogroup" aria-labelledby="rueckweg-marke">
+              {[['telefon', 'Anruf'], ['email', 'E-Mail'], ['egal', 'Egal']].map(([wert, text], i) => (
+                <label class="segment__teil">
+                  <input type="radio" name="rueckweg" value={wert} class="nur-sr" checked={i === 0} />
+                  <span>{text}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <label class="zustimmung">
+            <input type="checkbox" name="zustimmung" required data-zustimmung />
+            <span>
+              Ich habe die <a href="/datenschutz">Datenschutzhinweise</a> gelesen und bin
+              damit einverstanden, dass meine Angaben zur Bearbeitung dieser Anfrage
+              gespeichert und verwendet werden.<span aria-hidden="true"> *</span>
+            </span>
+          </label>
+          <p class="fehlermeldung" data-fehler="zustimmung" role="alert" hidden></p>
+        </div>
+
+        <!-- Lebende Zusammenfassung: aktualisiert sich bei jeder Eingabe. -->
+        <aside class="pruefblatt" aria-live="polite" aria-label="Zusammenfassung Ihrer Anfrage">
+          <p class="mass">Ihre Anfrage</p>
+          <dl class="pruefblatt__liste" data-pruefblatt>
+            <div><dt>Bereich</dt><dd data-p="bereich">—</dd></div>
+            <div><dt>Leistung</dt><dd data-p="leistung">—</dd></div>
+            <div><dt>Wunschtermin</dt><dd data-p="wunsch">—</dd></div>
+            <div data-p-zeile="alt" hidden><dt>Ausweichtermin</dt><dd data-p="alt">—</dd></div>
+            <div><dt>Name</dt><dd data-p="name">—</dd></div>
+            <div><dt>E-Mail</dt><dd data-p="email">—</dd></div>
+            <div data-p-zeile="telefon" hidden><dt>Telefon</dt><dd data-p="telefon">—</dd></div>
+            <div><dt>Antwort per</dt><dd data-p="rueckweg">Anruf</dd></div>
+            <div data-p-zeile="anliegen" hidden><dt>Anliegen</dt><dd data-p="anliegen">—</dd></div>
+          </dl>
+          <p class="pruefblatt__fuss">
+            Verbindlich wird der Termin erst mit unserer Bestätigung.
+          </p>
+        </aside>
+      </div>
+    </fieldset>
+
+    <!-- Ergebnis der Übertragung -->
+    <div class="ergebnis" data-ergebnis hidden role="status" aria-live="polite"></div>
+
+    <div class="assistent__leiste">
+      <button type="button" class="knopf knopf--leer" data-zurueck hidden>Zurück</button>
+      <button type="button" class="knopf knopf--handlung" data-weiter>Weiter</button>
+      <button type="submit" class="knopf knopf--handlung" data-senden hidden>
+        <span data-senden-text>Anfrage senden</span>
+      </button>
+    </div>
+  </form>
+</section>
+
+<style>
+  .assistent {
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-3);
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    scroll-margin-top: calc(var(--nav-h) + 3.5rem);
+  }
+  @media (min-width: 60rem) { .assistent { scroll-margin-top: calc(var(--nav-h) + 1.5rem); } }
+
+  .assistent__kopf h2 {
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+    margin-top: .7rem;
+  }
+  .assistent__vorspann {
+    margin-top: .85rem;
+    max-width: 44rem;
+    color: var(--ink-2);
+  }
+
+  /* ---------- Schrittkette ---------- */
+  .kette {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .4rem;
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+  }
+  .kette__glied {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .3rem .7rem;
+    border-top: 2px solid var(--linie);
+    color: var(--ink-3);
+    transition: border-color var(--t-mittel) var(--e-aus), color var(--t-mittel) var(--e-aus);
+  }
+  .kette__glied[aria-current='step'] { border-top-color: var(--azure); color: var(--ink); }
+  .kette__glied[data-erledigt] { border-top-color: var(--navy); color: var(--ink-2); }
+  .kette__zahl {
+    font-family: var(--f-mono);
+    font-size: .75rem;
+    font-weight: 600;
+    flex: none;
+  }
+  .kette__name {
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (max-width: 26rem) {
+    .kette__name { font-size: .6875rem; }
+  }
+
+  /* ---------- Kontextleiste ---------- */
+  .wahlband {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-top: 1.25rem;
+    padding: .7rem .85rem;
+    background: var(--papier-2);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+  }
+  .wahlband__zeichen {
+    display: grid; place-items: center;
+    width: 2.4rem; height: 2.4rem; flex: none;
+    border-radius: var(--r-2);
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    color: var(--navy);
+  }
+  .wahlband__zeichen :global(svg) { width: 1.3rem; height: 1.3rem; }
+  .wahlband__text { display: grid; min-width: 0; gap: .05rem; }
+  .wahlband__text strong { font-size: .9375rem; line-height: 1.25; }
+  .wahlband__text small { font-size: .75rem; color: var(--ink-3); line-height: 1.25; }
+  .wahlband__aendern {
+    margin-left: auto;
+    flex: none;
+    min-height: 2.75rem;
+    padding-inline: .85rem;
+    background: transparent;
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-2);
+    color: var(--navy);
+    font-family: var(--f-text);
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--t-kurz) var(--e-aus), border-color var(--t-kurz) var(--e-aus);
+  }
+  .wahlband__aendern:hover { background: var(--weiss); border-color: var(--navy); }
+
+  /* ---------- Felder ---------- */
+  .assistent__form { margin-top: 1.5rem; }
+  .schritt { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+
+  .feld + .feld { margin-top: 1.75rem; }
+  .feld__marke {
+    display: block;
+    font-family: var(--f-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .feld__marke--klein { font-size: .9375rem; margin-bottom: .5rem; }
+  .feld__zusatz {
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .feld__hinweis {
+    margin-top: .35rem;
+    font-size: .875rem;
+    color: var(--ink-2);
+  }
+
+  /* Bereichswahl */
+  .bereiche {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .5rem;
+    margin-top: .9rem;
+  }
+  @media (min-width: 44rem) { .bereiche { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  .bereich__flaeche {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .6rem;
+    min-height: 5.5rem;
+    padding: .85rem;
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: border-color var(--t-kurz) var(--e-aus),
+                background var(--t-kurz) var(--e-aus),
+                color var(--t-kurz) var(--e-aus),
+                box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .bereich__flaeche strong {
+    font-family: var(--f-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .bereich:hover .bereich__flaeche { border-color: var(--linie-stark); box-shadow: var(--schatten-1); }
+  .bereich input:focus-visible + .bereich__flaeche { outline: 2px solid var(--azure); outline-offset: 2px; }
+  .bereich input:checked + .bereich__flaeche {
+    border-color: var(--navy);
+    border-width: 2px;
+    padding: calc(.85rem - 1px);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .bereich[data-medium='waerme']  input:checked + .bereich__flaeche { border-color: var(--medium-waerme);  background: var(--medium-waerme-flaeche);  color: var(--medium-waerme); }
+  .bereich[data-medium='wasser']  input:checked + .bereich__flaeche { border-color: var(--medium-wasser);  background: var(--medium-wasser-flaeche);  color: var(--medium-wasser); }
+  .bereich[data-medium='luft']    input:checked + .bereich__flaeche { border-color: var(--medium-luft);    background: var(--medium-luft-flaeche);    color: var(--medium-luft); }
+  .bereich[data-medium='service'] input:checked + .bereich__flaeche { border-color: var(--medium-service); background: var(--medium-service-flaeche); color: var(--medium-service); }
+
+  /* Leistungswahl */
+  .wahlgitter {
+    display: grid;
+    gap: .5rem;
+    margin-top: .9rem;
+  }
+  @media (min-width: 40rem) { .wahlgitter { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .wahl__flaeche {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .8rem;
+    min-height: 4rem;
+    padding: .8rem;
+    background: var(--weiss);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+    cursor: pointer;
+    transition: border-color var(--t-kurz) var(--e-aus), box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .wahl:hover .wahl__flaeche { border-color: var(--linie-stark); box-shadow: var(--schatten-1); }
+  .wahl input:focus-visible + .wahl__flaeche { outline: 2px solid var(--azure); outline-offset: 2px; }
+  .wahl input:checked + .wahl__flaeche {
+    border-color: var(--navy);
+    border-width: 2px;
+    padding: calc(.8rem - 1px);
+  }
+  .wahl__zeichen {
+    display: grid; place-items: center;
+    width: 2.5rem; height: 2.5rem;
+    border-radius: var(--r-2);
+    background: var(--papier-2);
+    color: var(--navy);
+  }
+  .wahl__text { display: grid; gap: .05rem; min-width: 0; }
+  .wahl__text strong { font-size: .9375rem; font-weight: 600; line-height: 1.3; }
+  .wahl__text small { font-size: .8125rem; color: var(--ink-2); line-height: 1.35; }
+  .wahl__haken {
+    display: grid; place-items: center;
+    width: 1.5rem; height: 1.5rem;
+    border-radius: var(--r-rund);
+    border: 1px solid var(--linie-stark);
+    color: transparent;
+    transition: background var(--t-kurz) var(--e-aus), color var(--t-kurz) var(--e-aus),
+                border-color var(--t-kurz) var(--e-aus);
+  }
+  .wahl__haken svg { width: .85rem; height: .85rem; }
+  .wahl input:checked + .wahl__flaeche .wahl__haken {
+    background: var(--navy); border-color: var(--navy); color: var(--weiss);
+  }
+
+  /* Eingaben */
+  .zeitpaar {
+    display: grid;
+    gap: .75rem;
+    margin-top: .9rem;
+  }
+  @media (min-width: 34rem) { .zeitpaar { grid-template-columns: 1.4fr 1fr; } }
+
+  .eingabe { display: grid; gap: .35rem; }
+  .eingabe + .eingabe { margin-top: 1.1rem; }
+  .eingabe label {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .eingabe input, .assistent textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: .7rem .85rem;
+    font-family: var(--f-text);
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--weiss);
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-2);
+    transition: border-color var(--t-kurz) var(--e-aus), box-shadow var(--t-kurz) var(--e-aus);
+  }
+  .assistent textarea { resize: vertical; line-height: 1.55; }
+  .eingabe input:hover, .assistent textarea:hover { border-color: var(--navy); }
+  .eingabe input:focus-visible, .assistent textarea:focus-visible {
+    outline: none;
+    border-color: var(--azure);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--azure) 22%, transparent);
+  }
+  .eingabe input[aria-invalid='true'], .assistent textarea[aria-invalid='true'] {
+    border-color: var(--fehler);
+    background: var(--fehler-flaeche);
+  }
+
+  /* Segmentierte Wahl */
+  .segment { display: flex; gap: .3rem; flex-wrap: wrap; }
+  .segment__teil span {
+    display: grid;
+    place-items: center;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--linie-stark);
+    border-radius: var(--r-2);
+    font-size: .9375rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background var(--t-kurz) var(--e-aus), border-color var(--t-kurz) var(--e-aus),
+                color var(--t-kurz) var(--e-aus);
+  }
+  .segment__teil:hover span { border-color: var(--navy); }
+  .segment__teil input:focus-visible + span { outline: 2px solid var(--azure); outline-offset: 2px; }
+  .segment__teil input:checked + span {
+    background: var(--navy); border-color: var(--navy); color: var(--weiss);
+  }
+
+  .zustimmung {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: .7rem;
+    margin-top: 1.4rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .zustimmung input {
+    width: 1.35rem; height: 1.35rem;
+    margin-top: .1rem;
+    accent-color: var(--navy);
+    cursor: pointer;
+  }
+
+  .fehlermeldung {
+    margin-top: .45rem;
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--fehler);
+  }
+  .fehlermeldung::before { content: '!'; font-family: var(--f-mono); flex: none; }
+
+  /* Prüfblatt */
+  .dreispalt { display: grid; gap: 1.75rem; }
+  @media (min-width: 58rem) {
+    .dreispalt { grid-template-columns: minmax(0, 1fr) 20rem; gap: 2.25rem; align-items: start; }
+  }
+
+  .pruefblatt {
+    padding: 1.1rem;
+    background: var(--papier-2);
+    border: 1px solid var(--linie);
+    border-radius: var(--r-2);
+  }
+  .pruefblatt__liste { margin: .9rem 0 0; display: grid; gap: .55rem; }
+  .pruefblatt__liste > div {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: .5rem;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--linie);
+  }
+  .pruefblatt__liste > div:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pruefblatt dt {
+    font-family: var(--f-mono);
+    font-size: .625rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: .15rem;
+  }
+  .pruefblatt dd {
+    margin: 0;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .pruefblatt__fuss {
+    margin-top: .9rem;
+    font-size: .75rem;
+    color: var(--ink-3);
+    line-height: 1.45;
+  }
+
+  /* Ergebnis */
+  .ergebnis {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--r-2);
+    border: 1px solid var(--linie);
+    background: var(--papier-2);
+    font-size: .9375rem;
+    line-height: 1.55;
+  }
+  .ergebnis[data-art='fehler'] { border-color: var(--fehler); background: var(--fehler-flaeche); }
+  .ergebnis[data-art='erfolg'] { border-color: var(--erfolg); background: #eaf5ef; }
+  .ergebnis :global(h3) { font-size: 1.0625rem; margin-bottom: .4rem; }
+  .ergebnis :global(.ergebnis__wege) {
+    display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem;
+  }
+
+  /* Leiste */
+  .assistent__leiste {
+    display: flex;
+    gap: .6rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--linie);
+  }
+  .assistent__leiste .knopf { flex: 1; }
+  @media (min-width: 40rem) {
+    .assistent__leiste { justify-content: flex-end; }
+    .assistent__leiste .knopf { flex: 0 0 auto; min-width: 10rem; }
+  }
+</style>
+
+<script>
+  import { starteAssistent } from '@/scripts/termin-assistent';
+  starteAssistent();
+</script>

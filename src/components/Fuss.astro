@@ -1,0 +1,133 @@
+---
+import { business, routeUrl } from '@/data/business';
+import { services } from '@/data/services';
+---
+
+<footer class="fuss">
+  <div class="schacht fuss__gitter">
+    <div class="fuss__marke">
+      <img src="/franzmann-logo.png" alt={`${business.brand} ${business.brandLine}`}
+           width="286" height="156" class="fuss__logo" />
+      <p class="fuss__signatur">
+        {business.signage.map((wort, i) => (
+          <>{i > 0 && <span aria-hidden="true"> · </span>}{wort}</>
+        ))}
+      </p>
+      <p class="fuss__satz">{business.claim}.</p>
+    </div>
+
+    <div class="fuss__spalte">
+      <h2 class="mass">Leistungen</h2>
+      <ul>
+        {services.map((s) => (
+          <li><a href={`/leistungen/${s.slug}`}>{s.name}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="fuss__spalte">
+      <h2 class="mass">Betrieb</h2>
+      <ul>
+        <li><a href="/team">Über uns</a></li>
+        <li><a href="/termin">Termin anfragen</a></li>
+        <li><a href="/kontakt">Kontakt und Anfahrt</a></li>
+        <li><a href="/impressum">Impressum</a></li>
+        <li><a href="/datenschutz">Datenschutz</a></li>
+      </ul>
+    </div>
+
+    <address class="fuss__adresse">
+      <h2 class="mass">Hermann Franzmann GmbH</h2>
+      <p>
+        {business.address.street}<br />
+        {business.address.postalCode} {business.address.city}
+      </p>
+      <p>
+        <a href={business.phone.href}>{business.phone.display}</a><br />
+        <a href={`mailto:${business.email}`}>{business.email}</a>
+      </p>
+      <p class="fuss__zeiten">
+        <span class="mass">Bürozeiten</span><br />
+        {business.officeHours.days}<br />
+        {business.officeHours.from} – {business.officeHours.to} Uhr
+      </p>
+      <a class="knopf knopf--leer fuss__route" href={routeUrl}
+         target="_blank" rel="noopener noreferrer">Route berechnen</a>
+    </address>
+  </div>
+
+  <div class="fuss__leiste">
+    <div class="schacht fuss__leiste-inhalt">
+      <p>© {new Date().getFullYear()} {business.legalName}</p>
+      <p class="mass">{business.legal.register} · Geschäftsführer {business.legal.managingDirector}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .fuss {
+    margin-top: clamp(3rem, 8vw, 6rem);
+    background: var(--papier-2);
+    border-top: 1px solid var(--linie);
+  }
+
+  .fuss__gitter {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+  @media (min-width: 44rem) {
+    .fuss__gitter { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 68rem) {
+    .fuss__gitter { grid-template-columns: 1.4fr .8fr .8fr 1.2fr; gap: 3rem; }
+  }
+
+  .fuss__logo { width: auto; height: 2.1rem; }
+  .fuss__signatur {
+    margin-top: .7rem;
+    font-family: var(--f-mono);
+    font-size: .6875rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .fuss__satz {
+    margin-top: 1rem;
+    max-width: 26rem;
+    color: var(--ink-2);
+    font-size: .9375rem;
+  }
+
+  .fuss__spalte h2, .fuss__adresse h2 { margin-bottom: .9rem; }
+  .fuss__spalte ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; }
+  .fuss__spalte a, .fuss__adresse a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: .9375rem;
+  }
+  .fuss__spalte a:hover, .fuss__adresse a:hover { color: var(--azure-tief); text-decoration: underline; }
+
+  .fuss__adresse { font-style: normal; display: grid; gap: .9rem; align-content: start; }
+  .fuss__adresse p { font-size: .9375rem; color: var(--ink-2); }
+  .fuss__zeiten .mass { display: inline-block; margin-bottom: .25rem; }
+  .fuss__route { margin-top: .3rem; justify-self: start; }
+
+  .fuss__leiste { border-top: 1px solid var(--linie); }
+  .fuss__leiste-inhalt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1.5rem;
+    justify-content: space-between;
+    padding-block: 1.1rem;
+    /* Platz für die schwebende Schaltfläche unten rechts */
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom));
+  }
+  .fuss__leiste p { font-size: .8125rem; color: var(--ink-3); }
+  @media (max-width: 44rem) {
+    .fuss__leiste-inhalt { padding-right: 5rem; }
+  }
+</style>

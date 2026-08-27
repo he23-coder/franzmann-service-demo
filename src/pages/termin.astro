@@ -1,0 +1,35 @@
+---
+import Basis from '@/layouts/Basis.astro';
+import TerminAssistent from '@/components/TerminAssistent.astro';
+import { business } from '@/data/business';
+---
+<Basis
+  titel="Termin anfragen — Franzmann Bad und Heizung, Weinheim"
+  beschreibung="Termin für Heizung, Bad, Klima oder Kundendienst in Weinheim anfragen — in drei Schritten, mit Wunschdatum und Uhrzeit."
+>
+  <section class="terminseite plan-raster">
+    <div class="schacht terminseite__kopf">
+      <p class="pos">Terminanfrage</p>
+      <h1>Sagen Sie uns, worum es geht</h1>
+      <p class="terminseite__text">
+        Drei Schritte, keine Anmeldung. Wenn es eilt, rufen Sie besser an:
+        <a href={business.phone.href}>{business.phone.display}</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="abschnitt">
+    <div class="schacht"><TerminAssistent kompakt /></div>
+  </section>
+</Basis>
+
+<style>
+  .terminseite { border-bottom: 1px solid var(--linie); padding-block: clamp(2rem, 5vw, 3rem); }
+  .terminseite__kopf { position: relative; z-index: 1; max-width: 44rem; }
+  .terminseite h1 {
+    margin-top: 1rem;
+    font-size: clamp(2.2rem, 1.5rem + 3.4vw, 3.75rem);
+    letter-spacing: -.032em;
+  }
+  .terminseite__text { margin-top: 1rem; font-size: 1.125rem; color: var(--ink-2); }
+</style>

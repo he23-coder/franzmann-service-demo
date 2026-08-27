@@ -1,0 +1,29 @@
+{
+  "name": "franzmann-service-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "serve:dist": "node scripts/static-server.mjs",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/familjen-grotesk": "^5.2.5",
+    "@fontsource-variable/hanken-grotesk": "^5.2.5",
+    "@fontsource-variable/spline-sans-mono": "^5.2.5",
+    "astro": "^7.1.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@cloudflare/workers-types": "^5.20260827.1",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.10.0",
+    "sharp": "^0.34.2",
+    "typescript": "^5.7.2",
+    "wrangler": "^4.42.0"
+  }
+}

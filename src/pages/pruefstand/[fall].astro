@@ -1,0 +1,71 @@
+---
+/**
+ * Prüfstand für das Karussell.
+ *
+ * Diese Seite entsteht ausschließlich, wenn mit PRUEFSTAND=1 gebaut wird.
+ * Im ausgelieferten Stand existiert sie nicht. Sie enthält bewusst
+ * Platzhaltertexte, damit sich das Verhalten mit mehreren Folien prüfen
+ * lässt — es sind keine Kundenstimmen und sie werden niemandem gezeigt.
+ */
+import Basis from '@/layouts/Basis.astro';
+
+export function getStaticPaths() {
+  if (process.env.PRUEFSTAND !== '1') return [];
+  return [{ params: { fall: 'karussell' } }];
+}
+
+const folien = [
+  { id: 'a', text: 'Folie A — kurzer Text.', autor: 'Prüfung A', datum: '01.01.2020' },
+  { id: 'b', text: 'Folie B — ein deutlich längerer Text, damit sich prüfen lässt, ob die Höhe der Bühne wirklich der aktiven Folie folgt und nicht dauerhaft der längsten Folie entspricht. Zweiter Satz für zusätzliche Zeilen im Umbruch.', autor: 'Prüfung B', datum: '02.01.2020' },
+  { id: 'c', text: 'Folie C — mittellang, für den dritten Punkt.', autor: 'Prüfung C', datum: '03.01.2020' },
+];
+---
+<Basis titel="Prüfstand" beschreibung="Prüfstand">
+  <section class="abschnitt">
+    <div class="schacht">
+      <section class="stimmen" data-stimmen>
+        <div class="protokolle" data-buehne aria-roledescription="Karussell" aria-label="Prüfstand">
+          <div class="protokolle__band" data-band>
+            {folien.map((f, i) => (
+              <article class="protokoll" data-folie={i} role="group"
+                       aria-label={`${i + 1} von ${folien.length}`}
+                       aria-hidden={i !== 0 ? 'true' : undefined} hidden={i !== 0}>
+                <blockquote class="protokoll__text"><p>{f.text}</p></blockquote>
+                <dl class="protokoll__zeilen">
+                  <div><dt>Verfasst von</dt><dd>{f.autor}</dd></div>
+                  <div><dt>Datum</dt><dd>{f.datum}</dd></div>
+                </dl>
+              </article>
+            ))}
+          </div>
+          <div class="steuerung">
+            <button type="button" class="steuerung__knopf" data-zurueck aria-label="Zurück">‹</button>
+            <div class="steuerung__punkte" role="tablist" aria-label="Wahl">
+              {folien.map((_, i) => (
+                <button type="button" class="punkt" role="tab" data-punkt={i}
+                        aria-selected={i === 0 ? 'true' : 'false'}
+                        aria-label={`Folie ${i + 1}`}><span></span></button>
+              ))}
+            </div>
+            <button type="button" class="steuerung__knopf" data-halten aria-pressed="false"
+                    aria-label="Anhalten">||</button>
+            <button type="button" class="steuerung__knopf" data-weiter aria-label="Weiter">›</button>
+          </div>
+          <p class="nur-sr" aria-live="polite" data-ansage></p>
+        </div>
+      </section>
+    </div>
+  </section>
+</Basis>
+
+<style>
+  .protokoll { background: #fff; border: 1px solid #ccc; padding: 1rem; border-radius: 4px; }
+  .steuerung { display: flex; gap: .4rem; margin-top: 1rem; }
+  .steuerung__knopf { min-width: 2.75rem; min-height: 2.75rem; cursor: pointer; }
+  .punkt { min-width: 2.75rem; min-height: 2.75rem; cursor: pointer; }
+</style>
+
+<script>
+  import { starteStimmen } from '@/scripts/stimmen';
+  starteStimmen();
+</script>
