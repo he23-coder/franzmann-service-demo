@@ -305,10 +305,11 @@ const minDatum = new Date(heute.getTime() + 86_400_000).toISOString().slice(0, 1
     font-size: .8125rem;
     font-weight: 600;
     line-height: 1.2;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Umbrechen statt abschneiden — „Wunschtermin" darf nicht zu „Wunschterm…" werden. */
+    text-wrap: balance;
   }
-  @media (max-width: 26rem) {
+  @media (max-width: 30rem) {
+    .kette__glied { align-items: flex-start; gap: .35rem; }
     .kette__name { font-size: .6875rem; }
   }
 

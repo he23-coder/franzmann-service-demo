@@ -5,7 +5,10 @@ import sitemap from '@astrojs/sitemap';
 // Statischer Build. Der Worker (src/worker.ts) liefert die Dateien aus und setzt
 // die Sicherheits- und Indexierungs-Header für jede Antwort.
 export default defineConfig({
-  site: 'https://franzmann-service-demo.he23-coder.workers.dev',
+  // Adresse der veröffentlichten Seite. Sie fließt in canonical, Open Graph
+  // und die Sitemap ein und lässt sich beim Bauen überschreiben:
+  //   SITE_URL=https://…workers.dev npm run build
+  site: process.env.SITE_URL ?? 'https://franzmann-bad-heizung-weinheim.workers.dev',
   output: 'static',
   trailingSlash: 'never',
   integrations: [sitemap()],

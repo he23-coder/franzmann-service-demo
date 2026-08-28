@@ -178,3 +178,19 @@ test.describe('Textos de producción y afordancias reales', () => {
     await expect(tel.first()).toHaveAttribute('href', 'tel:+49620190330');
   });
 });
+
+test.describe('Schnellzugriff im Assistenten', () => {
+  test('la ventana flotante se retira mientras el asistente está en pantalla', async ({ page }) => {
+    await page.goto('/');
+    const flotante = page.locator('[data-schnellzugriff]');
+    await expect(flotante).not.toHaveClass(/ist-fort/);
+
+    await page.locator('#termin-assistent').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    await expect(flotante, 'no debe tapar las tarjetas de selección').toHaveClass(/ist-fort/);
+
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.waitForTimeout(500);
+    await expect(flotante).not.toHaveClass(/ist-fort/);
+  });
+});

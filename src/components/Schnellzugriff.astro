@@ -136,8 +136,18 @@ const wege = [
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
+  /* Ausgeblendet, solange der Termin-Assistent im Bild ist. */
+  .schnell.ist-fort {
+    opacity: 0;
+    transform: translateY(.75rem) scale(.9);
+    pointer-events: none;
+    transition: opacity var(--t-mittel) var(--e-aus), transform var(--t-mittel) var(--e-aus);
+  }
+  .schnell { transition: opacity var(--t-mittel) var(--e-aus), transform var(--t-mittel) var(--e-aus); }
+
   @media (prefers-reduced-motion: reduce) {
     .schnell__liste { animation: none; }
+    .schnell, .schnell.ist-fort { transition: none; }
   }
 </style>
 

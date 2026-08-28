@@ -257,7 +257,7 @@ der Fokus springt auf das betreffende Feld.
 
 ## 10 · Was geprüft wurde
 
-**180 Playwright-Prüfungen, 0 Fehler, 39 übersprungen** (Prüfungen, die nur
+**183 Playwright-Prüfungen, 0 Fehler, 39 übersprungen** (Prüfungen, die nur
 in einer Größe sinnvoll sind), verteilt auf drei Geräteklassen:
 Telefon 390 × 844, Tablet 834 × 1112, Rechner 1440 × 900.
 
@@ -290,6 +290,28 @@ wieder alles grün.
 5. Ohne JavaScript blieben die Auftritts-Abschnitte unsichtbar. Ein
    `<noscript>`-Block zeigt jetzt alles sofort.
 
+**Veröffentlichung**
+
+Der Bau läuft in GitHub Actions durch (`npm ci`, `npm run build`); der Schritt
+`wrangler deploy` bricht ab, weil im Repository die beiden Secrets
+`CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID` fehlen:
+
+> In a non-interactive environment, it's necessary to set a
+> CLOUDFLARE_API_TOKEN environment variable for wrangler to work.
+
+Diese Secrets setzt sonst `he23-coder/demo-factory`. Deren beide Abläufe
+(`create-demo` und `run-deploy`) scheitern jedoch seit dem 20.08.2026
+durchgängig nach zwei bis vier Sekunden, ohne einen einzigen Schritt zu
+protokollieren; die Protokolle sind nicht abrufbar (HTTP 404). Betroffen sind
+auch fremde Anfragen aus dieser Zeit. Zwei Versuche für diese Demo
+(Vorgang 33128491382, Anläufe 1 und 2) verhielten sich identisch. Im
+Repository dieser Website laufen Actions dagegen einwandfrei — die Ursache
+liegt also in der Fabrik, nicht hier.
+
+**Es gibt deshalb keine öffentliche Adresse, die geprüft werden könnte.**
+Sobald die beiden Secrets im Repository liegen, genügt ein Lauf von
+`deploy.yml`; alles Übrige ist vorbereitet.
+
 **Nicht geprüft / nicht möglich**
 - **Kein Zugriff auf Google.** `google.com` und `google.com/maps` liefern in
   dieser Umgebung nur die JavaScript-Weiterleitung; ein echter Browser
@@ -297,6 +319,10 @@ wieder alles grün.
   reproduzierbar auch gegen `example.com`. Deshalb konnten Google-Profil,
   Place ID, Bewertungen und der Link zum Bewertungsformular nicht verifiziert
   und folglich nicht verwendet werden.
+- **Keine Prüfung an einer öffentlichen Adresse**, da die Veröffentlichung
+  aus dem oben genannten Grund nicht stattgefunden hat. Alle Angaben zu
+  Kopfzeilen, Weiterleitungen und Verhalten stammen aus dem gebauten Stand,
+  ausgeliefert mit denselben Kopfzeilen wie im Worker (`scripts/static-server.mjs`).
 - Kein Lighthouse-Lauf und keine echten Gerätemessungen; Aussagen zur
   Geschwindigkeit stützen sich auf die gebauten Dateigrößen.
 - Der Mailversand ist nicht angeschlossen und wurde daher nicht durchlaufen —
