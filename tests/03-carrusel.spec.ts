@@ -165,13 +165,30 @@ test.describe('Sección de reseñas publicada', () => {
     }
   });
 
-  test('15 · el CTA para escribir reseña apunta al destino oficial verificado', async ({ page }) => {
-    const boton = page.getByRole('link', { name: /Bewertung schreiben/ });
+  test('15 · el CTA para valorar apunta al perfil de Google verificado', async ({ page }) => {
+    const boton = page.getByRole('link', { name: /Auf Google bewerten/ });
     await expect(boton).toBeVisible();
     const href = await boton.getAttribute('href');
-    expect(href).toBe(
-      'https://www.11880.com/branchenbuch/weinheim-an-der-bergstrasse/060692320B26531305/hermann-franzmann-gmbh.html#jetzt-bewerten',
-    );
+    // Perfil facilitado por el propio negocio; kgmid resuelto de su enlace de compartir.
+    expect(href).toBe('https://www.google.com/search?kgmid=/g/1tg9m25r&q=Hermann+Franzmann+GmbH');
+    expect(href, 'nunca una búsqueda genérica sin identificador').toContain('kgmid=');
+    await expect(boton).toHaveAttribute('rel', /noopener/);
+    await expect(boton).toHaveAttribute('target', '_blank');
+  });
+
+  test('el enlace para leer las reseñas de Google usa el mismo perfil', async ({ page }) => {
+    const boton = page.getByRole('link', { name: /Bewertungen bei Google lesen/ });
+    await expect(boton).toBeVisible();
+    await expect(boton).toHaveAttribute('href', /kgmid=\/g\/1tg9m25r/);
+  });
+
+  test('no se afirma ninguna nota de Google que no se haya podido leer', async ({ page }) => {
+    const texto = await page.locator('#stimmen').innerText();
+    // La única nota mostrada es la de 11880, con su fuente declarada.
+    // innerText devuelve el texto ya transformado por CSS (versalitas).
+    expect(texto).toMatch(/Quelle:\s*11880\.com/i);
+    expect(texto).not.toMatch(/[0-9],[0-9]\s*(von 5|Sterne)[^]{0,40}Google/i);
+    expect(texto).not.toMatch(/Google-Bewertung(en)?:\s*[0-9]/i);
   });
 
   test('la reseña mostrada trae autor, fecha, valoración y fuente', async ({ page }) => {

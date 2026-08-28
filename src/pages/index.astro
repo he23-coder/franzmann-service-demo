@@ -12,7 +12,7 @@ const kurzTeam = team.slice(0, 8);
 
 <Basis
   titel="Franzmann — Bad und Heizung in Weinheim | Hermann Franzmann GmbH"
-  beschreibung="Heizung, Bad, Klima und Kundendienst aus einer Hand in Weinheim. Wärmepumpe, Badsanierung, Klimaanlage und Wartung — vom Meisterbetrieb in der Weinheimer Altstadt."
+  beschreibung="Heizung, Bad, Klima und Kundendienst aus einer Hand in Weinheim. Wärmepumpe, Badsanierung, Klimaanlage und Wartung — vom Fachbetrieb aus Weinheim."
   hauptseite
 >
   <!-- ============ Planblatt: Der Schnitt durch das Haus ============ -->
@@ -27,7 +27,7 @@ const kurzTeam = team.slice(0, 8);
         <p class="schriftfeld__text">
           Heizung, Bad, Klima und Kundendienst aus einer Hand. Wir planen, bauen
           und betreuen die Technik in Ihrem Zuhause — seit über hundert Jahren
-          aus der Weinheimer Altstadt.
+          in Weinheim und Umgebung.
         </p>
         <div class="schriftfeld__wege">
           <a class="knopf knopf--handlung knopf--gross" href="/termin">Termin anfragen</a>
@@ -67,21 +67,21 @@ const kurzTeam = team.slice(0, 8);
   <section class="abschnitt betrieb" aria-labelledby="betrieb-titel">
     <div class="schacht betrieb__gitter">
       <figure class="betrieb__bild" data-auftritt="seite">
-        <img src="/bilder/betrieb-muenzgasse.webp"
-             srcset="/bilder/betrieb-muenzgasse-800.webp 800w, /bilder/betrieb-muenzgasse.webp 1600w"
+        <img src="/bilder/betrieb-solar-dach.webp"
+             srcset="/bilder/betrieb-solar-dach-800.webp 800w, /bilder/betrieb-solar-dach.webp 1600w"
              sizes="(min-width: 66rem) 46vw, 92vw"
              width="1600" height="1067" loading="lazy" decoding="async"
-             alt="Das Betriebsgebäude in der Münzgasse: Sandsteinfassade mit blauen Fensterläden und Rundbogentor" />
-        <figcaption class="mass">Münzgasse, Weinheimer Altstadt</figcaption>
+             alt="Ein Monteur steht auf einem Ziegeldach neben frisch montierten Solarkollektoren" />
+        <figcaption class="mass">Solarkollektoren, frisch montiert</figcaption>
       </figure>
 
       <div class="betrieb__text" data-auftritt>
         <p class="pos">Der Betrieb</p>
         <h2 id="betrieb-titel">Ein Handwerk, das man im Haus sieht — und im Ort findet.</h2>
         <p>
-          Unsere Werkstatt sitzt seit Generationen im Gerberbachviertel, hinter der
-          Sandsteinfassade mit den blauen Läden. Wer bei uns anruft, spricht mit
-          Menschen, die den Ort kennen und die Anlage später selbst warten.
+          Wer bei uns anruft, spricht mit Menschen aus Weinheim, die dieselbe Anlage
+          später selbst warten. Kein Kundenzentrum, keine wechselnden Subunternehmer —
+          dieselben Gesichter vom ersten Gespräch bis zur Wartung Jahre danach.
         </p>
         <p>
           {business.ownStatements.philosophy} Von der ersten Beratung bis zur
@@ -187,11 +187,11 @@ const kurzTeam = team.slice(0, 8);
     <div class="schacht standort__gitter">
       <div data-auftritt>
         <p class="pos">Standort</p>
-        <h2 id="standort-titel">Sie finden uns in der Altstadt</h2>
+        <h2 id="standort-titel">So finden Sie zu uns</h2>
         <p class="standort__text">
-          Die Werkstatt liegt in der {business.address.street.split(' ')[0]} im
-          {' '}{business.address.quarter} — Kopfsteinpflaster, Sandstein, blaue Läden.
-          Kommen Sie gern vorbei, am besten nach Absprache, damit jemand für Sie da ist.
+          Sie finden uns in der {business.address.street.split(' ').slice(0, 2).join(' ')}
+          {' '}in der {business.address.quarter} von Weinheim. Kommen Sie gern vorbei —
+          am besten nach Absprache, damit jemand für Sie da ist und Zeit hat.
         </p>
 
         <dl class="standort__daten">
@@ -225,11 +225,11 @@ const kurzTeam = team.slice(0, 8);
            zu Dritten beim Besuch, kein Nachladen, kein Springen des Layouts. -->
       <div class="karte" data-auftritt="seite">
         <a class="karte__bild" href={routeUrl} target="_blank" rel="noopener noreferrer">
-          <img src="/bilder/karte-muenzgasse.webp"
-               srcset="/bilder/karte-muenzgasse-700.webp 700w, /bilder/karte-muenzgasse.webp 1200w"
+          <img src="/bilder/karte-standort.webp"
+               srcset="/bilder/karte-standort-700.webp 700w, /bilder/karte-standort.webp 1200w"
                sizes="(min-width: 62rem) 44vw, 92vw"
                width="1200" height="615" loading="lazy" decoding="async"
-               alt="Kartenausschnitt der Weinheimer Altstadt mit markiertem Standort in der Münzgasse" />
+               alt="Kartenausschnitt von Weinheim mit markierter Sulzbacher Straße" />
           <span class="karte__marke">Route berechnen</span>
         </a>
         <p class="karte__fuss mass">Kartendaten: OpenStreetMap-Mitwirkende</p>

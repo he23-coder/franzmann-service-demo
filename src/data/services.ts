@@ -31,7 +31,8 @@ export type PictogramName =
   | 'waermepumpe' | 'brennwert' | 'pellet' | 'solarthermie' | 'bhkw' | 'brennstoffzelle'
   | 'badewanne' | 'dusche' | 'barrierefrei' | 'gaeste-wc' | 'planung-3d'
   | 'klimasplit' | 'lueftung'
-  | 'wartung' | 'reparatur' | 'notdienst' | 'beratung';
+  | 'wartung' | 'reparatur' | 'notdienst' | 'beratung'
+  | 'telefon' | 'mail' | 'termin';
 
 export interface Service {
   readonly slug: string;

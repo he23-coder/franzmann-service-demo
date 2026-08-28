@@ -43,7 +43,11 @@ ausschließlich die vom Unternehmen selbst veröffentlichte Rollenbezeichnung ve
 Die Website des Unternehmens nennt **7:30–16:00**. Verwendet wurde die Angabe des
 Unternehmens selbst (Website).
 
-### ⚠️ Adress-Widerspruch (wichtigster Fund der Recherche)
+### Adress-Widerspruch der bestehenden Website — vom Betrieb geklärt
+
+**Ergebnis: Sulzbacher Straße 31, 69469 Weinheim.** Der Betrieb hat dies am
+28.08.2026 auf Nachfrage bestätigt. Die neue Website verwendet diese Anschrift
+durchgängig; sie steht an einer Stelle in `src/data/business.ts`.
 
 Die bestehende Website nennt **zwei verschiedene Adressen**:
 
@@ -52,20 +56,29 @@ Die bestehende Website nennt **zwei verschiedene Adressen**:
 | **Münzgasse 5, 69469 Weinheim** | **Impressum** (`/kontakt/`) | Handelsregister/Northdata, Gelbe Seiten, 11880, golocal, sanitaer.org, wasserwaermeluft.de, SHK.de-Visitenkarte, cylex, **OpenStreetMap-POI „Franzmann Bad & Heizung"** |
 | Sulzbacher Straße 31, 69469 Weinheim | Footer der Startseite | Trustlocal, handwerksradar (beide vermutlich vom Website-Footer übernommen) |
 
-**Bewertung und getroffene Annahme:** Für Münzgasse 5 sprechen das Handelsregister, das
-Impressum des Unternehmens selbst, sämtliche Fachverzeichnisse und ein
-OpenStreetMap-Eintrag, der den Betrieb namentlich an dieser Adresse verzeichnet
-(49.5467179, 8.6734552). Entscheidend: das Betriebsfoto auf der Unternehmenswebsite
-(`k-Franzmann-2.jpg`) zeigt ein historisches Sandsteingebäude in einer Kopfsteinpflastergasse
-der Weinheimer Altstadt — das entspricht dem Gerberbachviertel (Münzgasse), nicht der
-Sulzbacher Straße im Weinheimer Norden.
+**Offene Punkte, die daraus folgen — für den Betrieb zur Kenntnis:**
 
-→ **Auf der neuen Website wird durchgängig Münzgasse 5 verwendet.** Der Wert liegt
-zentral in `src/data/business.ts` und ist an einer Stelle änderbar. Die Abweichung ist
-für den Inhaber zur Klärung dokumentiert (NAP-Inkonsistenz schadet dem lokalen SEO).
+1. **Das Handelsregister führt weiterhin Münzgasse 5** (Northdata, Stand 27.08.2026),
+   ebenso das Impressum und die Datenschutzerklärung der bestehenden Website sowie
+   sämtliche Fachverzeichnisse. Nach einem Umzug ist die Registeranschrift
+   anzupassen; für das Impressum ist die ladungsfähige Anschrift maßgeblich.
+2. **OpenStreetMap verzeichnet einen POI „Franzmann Bad & Heizung" an der
+   Münzgasse 5.** Solange dieser Eintrag steht, führen Kartendienste Kunden dorthin.
+3. **Das Betriebsfoto auf der bestehenden Website** (`k-Franzmann-2.jpg`) zeigt ein
+   historisches Sandsteingebäude in einer Kopfsteinpflastergasse — das ist nicht die
+   Sulzbacher Straße. Es wurde deshalb **nicht** als Standortbild übernommen.
+   An seiner Stelle steht eine Aufnahme einer frisch montierten Solaranlage aus dem
+   eigenen Medienbestand. Für die Anfahrt wäre ein aktuelles Foto des Gebäudes
+   in der Sulzbacher Straße hilfreich.
 
-**Geokoordinaten:** 49.546689 / 8.673495 — übereinstimmend belegt durch OpenStreetMap
-(Nominatim) und die strukturierten Daten von 11880.com.
+Die drei Punkte zusammen sind eine klassische NAP-Inkonsistenz und kosten
+unmittelbar lokale Sichtbarkeit.
+
+**Geokoordinaten:** 49.5664859 / 8.6626365 — Sulzbacher Straße laut OpenStreetMap
+(Nominatim). Für diese Straße sind dort **keine Hausnummern** erfasst; die Koordinate
+liegt daher auf dem Straßenzug, nicht metergenau auf dem Grundstück. Deshalb führt
+die Schaltfläche „Route berechnen" mit der **vollständigen Anschrift als Text** in
+den Kartendienst des Besuchers statt mit einer Koordinate — so trifft die Hausnummer.
 
 ### Leistungen (alle von der bestehenden Website belegt)
 
@@ -114,8 +127,28 @@ Mitarbeiterzahl · Einsatzgebiet über „Weinheim und Umgebung" hinaus.
 
 ## 1B — Google Business Profile
 
-**Ergebnis: nicht eindeutig verifizierbar — daher nicht verwendet.**
+**Ergebnis: Profil bestätigt. Bewertungstexte weiterhin nicht auslesbar.**
 
+Der Betrieb hat am 28.08.2026 seinen Teilen-Link genannt:
+`https://share.google/sUkhfrO3DE0GT5urZ`. Dieser löst auf
+
+```
+https://www.google.com/search?output=search&kgmid=/g/1tg9m25r&q=Hermann+Franzmann+GmbH
+```
+
+auf — also auf die Google-Kennung **`/g/1tg9m25r`** für „Hermann Franzmann GmbH".
+Da der Link vom Betrieb selbst stammt und die Weiterleitung nachvollziehbar ist,
+gilt das Profil als eindeutig zugeordnet. Verwendet wird die aufgelöste Form ohne
+Zählparameter; sie steht in `src/data/reviews.ts` unter `googleProfil`.
+
+Darauf verweisen zwei Schaltflächen im Bewertungsteil: „Bewertungen bei Google
+lesen" und „Auf Google bewerten". Ein direkter Link auf das Bewertungsformular
+(`search.google.com/local/writereview?placeid=…`) verlangt eine **Place ID**, die
+sich hier nicht ermitteln ließ — er wurde deshalb **nicht** konstruiert. Die
+Beschriftung verspricht entsprechend nur, was sie hält: Sie öffnet das Profil, auf
+dem „Rezension schreiben" unmittelbar zum Formular führt.
+
+**Die einzelnen Bewertungen konnten weiterhin nicht ausgelesen werden.**
 Vorgehen und Belege:
 
 1. `google.com/search` und `google.com/maps` liefern in dieser Umgebung ausschließlich
@@ -126,18 +159,21 @@ Vorgehen und Belege:
    **alle** externen Hosts fehl (getestet gegen `example.com`, `franzmann-service.de`,
    `google.com`, mit und ohne Proxy-Konfiguration). Localhost funktioniert — die
    Playwright-Tests laufen deshalb einwandfrei.
-3. Aggregatoren nennen widersprüchliche Werte: eine Quelle „4,9 bei 23 Bewertungen",
+3. Auch Dienste, die eine Seite als Text ausliefern, kommen nicht durch: Der Abruf
+   der aufgelösten Profiladresse endet mit dem Hinweis „Unsere Systeme haben
+   ungewöhnlichen Datenverkehr festgestellt" — also einer Sicherheitsabfrage.
+4. Aggregatoren nennen widersprüchliche Werte: eine Quelle „4,9 bei 23 Bewertungen",
    Trustlocal „8,5/10 bei 28 Bewertungen". **Beide sind nicht gegenprüfbar und wurden
    verworfen.**
 
-**Konsequenz:** Es wurden **keine** Google-Bewertungen, **keine** Sterne-Durchschnittswerte,
-**keine** Place ID und **kein** „Bewertung schreiben"-Link konstruiert. Einen Place ID zu
-erraten, um die Pflichtvorgabe formal zu erfüllen, wäre eine Erfindung.
+**Konsequenz:** Auf der Website steht **keine Google-Note**, **keine Anzahl von
+Google-Bewertungen** und **keine nacherzählte Google-Bewertung**. Verlinkt wird das
+bestätigte Profil, damit sich jeder die Bewertungen dort selbst ansieht.
 
-**Stattdessen umgesetzt:** ein Bewertungs-Karussell mit einer **tatsächlich belegten**
-Bewertung samt Quell-Link (siehe unten). Sobald das Google-Profil bestätigt ist, lassen
-sich Bewertungen in `src/data/reviews.ts` ergänzen — Struktur und Karussell sind darauf
-ausgelegt.
+**Stattdessen umgesetzt:** ein Bewertungsteil mit einer **tatsächlich belegten**
+Bewertung samt Quell-Link (siehe unten), dazu die beiden Wege zum Google-Profil.
+Sobald die Bewertungstexte vorliegen, kommen sie in `src/data/reviews.ts` — Karussell
+und strukturierte Daten übernehmen sie ohne weitere Änderung.
 
 ### Verifizierbare Bewertung (verwendet)
 

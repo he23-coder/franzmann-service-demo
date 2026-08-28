@@ -4,8 +4,8 @@
 
    Die Website ist als Arbeitszeichnung der Haustechnik angelegt: helles
    Planpapier, Navy als Konstruktionsfarbe, dünne Linien, Maßangaben in
-   Monospace. Alle Farben sind am realen Betriebsgebäude in der Münzgasse
-   und an der Wortmarke gemessen (siehe docs/source-audit.md).
+   Monospace. Alle Farben sind an der Wortmarke und an einer Gebäudeaufnahme
+   des Betriebs gemessen (siehe docs/source-audit.md).
    ========================================================================= */
 
 @import '@fontsource-variable/familjen-grotesk';
@@ -18,11 +18,11 @@
   --navy: #344d6d;
   --azure: #017bbf;
 
-  /* Aus dem Betriebsfoto Münzgasse gemessen */
-  --laden-navy: #546883;   /* Fensterläden */
+  /* Aus einer Gebäudeaufnahme des Betriebs gemessen */
+  --laden-navy: #546883;   /* Fensterläden, praktisch das Navy der Wortmarke */
   --sandstein: #ae9485;    /* Mauerwerk hell */
   --sandstein-tief: #675352;
-  --pflaster: #84807a;     /* Kopfsteinpflaster */
+  --pflaster: #84807a;     /* Pflaster */
 
   /* Flächen — warmes Planpapier statt kaltem Weiß */
   --papier: #faf7f3;

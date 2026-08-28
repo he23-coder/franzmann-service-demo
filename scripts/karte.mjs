@@ -6,7 +6,8 @@
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
 
-const LAT = 49.546689, LON = 8.673495, Z = 17;
+// Sulzbacher Straße, Weinheim-Nordstadt.
+const LAT = 49.5664859, LON = 8.6626365, Z = 17;
 let KACHEL = 256;
 const SPALTEN = 5, ZEILEN = 4;
 
@@ -64,8 +65,8 @@ const zuschnitt = {
   height: Math.round(hoehe),
 };
 await sharp(roh).extract(zuschnitt).resize(1200).webp({ quality: 82 })
-  .toFile('public/bilder/karte-muenzgasse.webp');
+  .toFile('public/bilder/karte-standort.webp');
 await sharp(roh).extract(zuschnitt).resize(700).webp({ quality: 78 })
-  .toFile('public/bilder/karte-muenzgasse-700.webp');
+  .toFile('public/bilder/karte-standort-700.webp');
 console.log('Ausschnitt:', zuschnitt);
 console.log(`Karte gebaut: ${B}x${H}, Marke bei ${px}/${py}`);

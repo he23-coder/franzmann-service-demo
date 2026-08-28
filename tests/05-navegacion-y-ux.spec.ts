@@ -171,6 +171,22 @@ test.describe('Textos de producción y afordancias reales', () => {
     await expect(page.locator('[data-leistung-eingabe][value="solarthermie"]')).toBeChecked();
   });
 
+  test('la dirección se muestra igual en todas partes', async ({ page }) => {
+    for (const ruta of ['/', '/kontakt', '/impressum']) {
+      await page.goto(ruta);
+      const texto = await page.locator('body').innerText();
+      expect(texto, `falta la dirección en ${ruta}`).toContain('Sulzbacher Straße 31');
+      expect(texto, `dirección antigua en ${ruta}`).not.toContain('Münzgasse');
+    }
+  });
+
+  test('el enlace de ruta lleva a la dirección completa', async ({ page }) => {
+    await page.goto('/kontakt');
+    const ruta = page.getByRole('link', { name: 'Route berechnen' }).first();
+    const href = await ruta.getAttribute('href');
+    expect(decodeURIComponent(href!)).toContain('Sulzbacher Straße 31, 69469 Weinheim');
+  });
+
   test('los teléfonos son enlaces tel: pulsables', async ({ page }) => {
     await page.goto('/');
     const tel = page.locator('a[href^="tel:"]');

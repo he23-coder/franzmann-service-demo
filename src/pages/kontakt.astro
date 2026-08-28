@@ -5,7 +5,7 @@ import { business, routeUrl } from '@/data/business';
 ---
 <Basis
   titel="Kontakt und Anfahrt — Franzmann Bad und Heizung, Weinheim"
-  beschreibung="So erreichen Sie die Hermann Franzmann GmbH in Weinheim: Telefon, E-Mail, Bürozeiten und Anfahrt zur Münzgasse in der Altstadt."
+  beschreibung="So erreichen Sie die Hermann Franzmann GmbH in Weinheim: Telefon, E-Mail, Bürozeiten und Anfahrt zur Sulzbacher Straße."
 >
   <section class="kontaktkopf plan-raster">
     <div class="schacht kontaktkopf__inhalt">
@@ -23,9 +23,9 @@ import { business, routeUrl } from '@/data/business';
     <div class="schacht">
       <ul class="wege">
         {[
-          { p: 'notdienst', t: 'Telefon', w: business.phone.display, h: business.phone.href, x: 'Auch bei Störungen und dringenden Fällen.', k: 'Anrufen' },
-          { p: 'beratung', t: 'E-Mail', w: business.email, h: `mailto:${business.email}`, x: 'Wir antworten zu den Bürozeiten.', k: 'Schreiben' },
-          { p: 'wartung', t: 'Termin-Assistent', w: 'In drei Schritten', h: '/termin', x: 'Leistung, Wunschtermin, Kontakt — fertig.', k: 'Anfragen' },
+          { p: 'telefon', t: 'Telefon', w: business.phone.display, h: business.phone.href, x: 'Auch bei Störungen und dringenden Fällen.', k: 'Anrufen' },
+          { p: 'mail', t: 'E-Mail', w: business.email, h: `mailto:${business.email}`, x: 'Wir antworten zu den Bürozeiten.', k: 'Schreiben' },
+          { p: 'termin', t: 'Termin-Assistent', w: 'In drei Schritten', h: '/termin', x: 'Leistung, Wunschtermin, Kontakt — fertig.', k: 'Anfragen' },
         ].map((w) => (
           <li>
             <a class="weg" href={w.h}>
@@ -47,12 +47,11 @@ import { business, routeUrl } from '@/data/business';
     <div class="schacht anfahrt__gitter">
       <div data-auftritt>
         <p class="pos">Anfahrt</p>
-        <h2 id="anfahrt-titel">Münzgasse, Weinheimer Altstadt</h2>
+        <h2 id="anfahrt-titel">Sulzbacher Straße, Weinheim-Nordstadt</h2>
         <p class="anfahrt__text">
-          Die Werkstatt liegt im {business.address.quarter} — an der Sandsteinfassade
-          mit den blauen Läden und dem Rundbogentor. Die Gassen ringsum sind eng und
-          gepflastert; wenn Sie mit dem Auto kommen, planen Sie ein paar Minuten Fußweg
-          von einem der Parkplätze in der Innenstadt ein.
+          Sie erreichen uns in der {business.address.quarter} von Weinheim. Für ein
+          Gespräch vor Ort vereinbaren Sie am besten vorher einen Termin — dann hat
+          jemand Zeit für Sie, statt zwischen zwei Einsätzen zu stehen.
         </p>
 
         <dl class="anfahrt__daten">
@@ -68,22 +67,14 @@ import { business, routeUrl } from '@/data/business';
 
       <div class="karte" data-auftritt="seite">
         <a class="karte__bild" href={routeUrl} target="_blank" rel="noopener noreferrer">
-          <img src="/bilder/karte-muenzgasse.webp"
-               srcset="/bilder/karte-muenzgasse-700.webp 700w, /bilder/karte-muenzgasse.webp 1200w"
+          <img src="/bilder/karte-standort.webp"
+               srcset="/bilder/karte-standort-700.webp 700w, /bilder/karte-standort.webp 1200w"
                sizes="(min-width: 62rem) 44vw, 92vw"
                width="1200" height="615" loading="lazy" decoding="async"
-               alt="Kartenausschnitt der Weinheimer Altstadt mit markiertem Standort in der Münzgasse" />
+               alt="Kartenausschnitt von Weinheim mit markierter Sulzbacher Straße" />
           <span class="karte__marke">Route berechnen</span>
         </a>
         <p class="karte__fuss mass">Kartendaten: OpenStreetMap-Mitwirkende</p>
-        <figure class="anfahrt__bild">
-          <img src="/bilder/betrieb-muenzgasse.webp"
-               srcset="/bilder/betrieb-muenzgasse-800.webp 800w, /bilder/betrieb-muenzgasse.webp 1600w"
-               sizes="(min-width: 62rem) 44vw, 92vw"
-               width="1600" height="1067" loading="lazy" decoding="async"
-               alt="Das Betriebsgebäude: Sandsteinfassade mit blauen Fensterläden, Rundbogentor und Schaufenster" />
-          <figcaption class="mass">Daran erkennen Sie uns</figcaption>
-        </figure>
       </div>
     </div>
   </section>

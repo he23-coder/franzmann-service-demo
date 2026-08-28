@@ -17,22 +17,26 @@ export const business = {
   brand: 'Franzmann',
   /** Unterzeile der Wortmarke. */
   brandLine: 'Bad und Heizung',
-  /** Beschilderung am Betriebsgebäude, Münzgasse. */
+  /** Beschilderung am Betriebsgebäude. */
   signage: ['Sanitär', 'Heizung', 'Solar'],
   claim: 'Ihr Bad- und Heizungsspezialist in Weinheim und Umgebung',
 
   address: {
-    street: 'Münzgasse 5',
+    street: 'Sulzbacher Straße 31',
     postalCode: '69469',
     city: 'Weinheim',
     region: 'Baden-Württemberg',
     country: 'DE',
     /** Stadtteil laut OpenStreetMap. */
-    quarter: 'Gerberbachviertel, Altstadt',
+    quarter: 'Nordstadt',
   },
 
-  /** Belegt durch OpenStreetMap (Nominatim) und 11880-Strukturdaten. */
-  geo: { lat: 49.546689, lng: 8.673495 },
+  /**
+   * Sulzbacher Straße, Weinheim-Nordstadt. OpenStreetMap führt für diese
+   * Straße keine Hausnummern; die Koordinate liegt daher auf dem
+   * Straßenzug, nicht metergenau auf dem Grundstück.
+   */
+  geo: { lat: 49.5664859, lng: 8.6626365 },
 
   phone: { display: '(06201) 9033-0', href: 'tel:+49620190330' },
   /** Laut Website identisch mit der Zentrale. */
@@ -70,8 +74,15 @@ export const business = {
   },
 } as const;
 
+/**
+ * Route zur vollständigen Anschrift statt zu einer Koordinate: OpenStreetMap
+ * führt für die Sulzbacher Straße keine Hausnummern, eine Adresssuche im
+ * Kartendienst des Besuchers trifft die Hausnummer dagegen zuverlässig.
+ */
 export const routeUrl =
-  `https://www.openstreetmap.org/directions?to=${business.geo.lat}%2C${business.geo.lng}`;
+  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    `${business.address.street}, ${business.address.postalCode} ${business.address.city}`,
+  )}`;
 
 export const mapUrl =
   `https://www.openstreetmap.org/?mlat=${business.geo.lat}&mlon=${business.geo.lng}#map=18/${business.geo.lat}/${business.geo.lng}`;

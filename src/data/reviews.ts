@@ -5,11 +5,17 @@
  * Jeder Eintrag trägt die Plattform, auf der er veröffentlicht wurde, und einen Link
  * dorthin. Texte stehen wörtlich und ungekürzt.
  *
- * Zum Google-Unternehmensprofil siehe docs/source-audit.md, Abschnitt 1B: Es ließ sich
- * in dieser Umgebung nicht zweifelsfrei verifizieren. Deshalb steht hier keine
- * Google-Bewertung, keine Google-Gesamtnote und kein konstruierter Bewertungslink.
- * Sobald das Profil bestätigt ist, werden Einträge hier ergänzt — Karussell und
- * strukturierte Daten übernehmen sie ohne weitere Änderung.
+ * Das Google-Unternehmensprofil ist bestätigt: Der Betrieb hat den Teilen-Link
+ * selbst genannt; er löst auf die Google-Kennung /g/1tg9m25r für
+ * „Hermann Franzmann GmbH" auf (siehe docs/source-audit.md, Abschnitt 1B).
+ * Darauf verweisen die Schaltflächen dieses Abschnitts.
+ *
+ * Die einzelnen Google-Bewertungen selbst konnten nicht ausgelesen werden —
+ * Google liefert ohne Browser nur eine Weiterleitungsseite und weist
+ * Textabruf mit einer Sicherheitsabfrage ab. Deshalb steht hier bewusst
+ * KEINE Google-Note und KEINE nacherzählte Google-Bewertung. Sobald die
+ * Texte vorliegen, werden sie hier ergänzt; Karussell und strukturierte
+ * Daten übernehmen sie ohne weitere Änderung.
  */
 
 export interface Review {
@@ -51,7 +57,16 @@ export const reviewsAggregate = {
   checkedOn: '2026-08-27',
   profileUrl:
     'https://www.11880.com/branchenbuch/weinheim-an-der-bergstrasse/060692320B26531305/hermann-franzmann-gmbh.html',
-  /** Offizielles Bewertungsformular der Plattform, per Anker auf der Profilseite. */
-  writeReviewUrl:
-    'https://www.11880.com/branchenbuch/weinheim-an-der-bergstrasse/060692320B26531305/hermann-franzmann-gmbh.html#jetzt-bewerten',
+} as const;
+
+/**
+ * Das Google-Unternehmensprofil des Betriebs. Die Adresse stammt aus dem
+ * Teilen-Link, den der Betrieb selbst genannt hat; hier steht die aufgelöste
+ * Form ohne Zählparameter. Auf dem Profil führt „Rezension schreiben"
+ * unmittelbar zum Bewertungsformular.
+ */
+export const googleProfil = {
+  url: 'https://www.google.com/search?kgmid=/g/1tg9m25r&q=Hermann+Franzmann+GmbH',
+  kennung: '/g/1tg9m25r',
+  checkedOn: '2026-08-28',
 } as const;

@@ -15,7 +15,10 @@ Klima-Seite. Die wichtigsten Befunde:
   unmittelbare Erreichbarkeit.
 - Die Datenschutzerklärung liegt ebenfalls nur als Abschnitt auf der Kontaktseite.
 - **Die Website widerspricht sich bei der eigenen Adresse:** Footer
-  „Sulzbacher Straße 31", Impressum „Münzgasse 5".
+  „Sulzbacher Straße 31", Impressum „Münzgasse 5". Der Betrieb hat am
+  28.08.2026 bestätigt: **Sulzbacher Straße 31** ist richtig. Handelsregister,
+  Impressum, Datenschutzerklärung und sämtliche Verzeichnisse führen weiterhin
+  die alte Anschrift — das gehört nachgezogen.
 
 **Vertrauen und Konversion**
 - Keine einzige Kundenstimme, obwohl eine belegbare Bewertung öffentlich vorliegt.
@@ -50,12 +53,12 @@ Klima-Seite. Die wichtigsten Befunde:
 |---|---|---|
 | Impressum | nur Abschnitt auf `/kontakt/` | eigene Seite `/impressum` |
 | Datenschutz | nur Abschnitt auf `/kontakt/` | eigene Seite `/datenschutz`, auf die tatsächliche Verarbeitung zugeschnitten |
-| Adresse | zwei widersprüchliche Angaben | eine Angabe, zentral in `src/data/business.ts` |
+| Adresse | zwei widersprüchliche Angaben | eine Angabe (Sulzbacher Straße 31), zentral in `src/data/business.ts` |
 | Termin | Formular mit Rechenaufgabe | Assistent in drei Schritten mit Datum und Uhrzeit |
 | Leistungen | vier Seiten ohne Struktur | vier Unterseiten mit Umfang, Ablauf, Fragen und eigenem Assistenten |
 | Notdienst | klein auf der Kontaktseite | eigener Streifen direkt unter dem Einstieg |
 | Telefon | reiner Text | `tel:`-Links überall, plus Schnellzugriff |
-| Bewertungen | keine | belegte Stimme mit Quelle, Datum und Link |
+| Bewertungen | keine | belegte Stimme mit Quelle, Datum und Link; dazu zwei Wege zum bestätigten Google-Profil |
 | Karte | keine | statische Karte, beim Bauen erzeugt, mit Routing |
 | Struktur | zwei `<h1>` je Seite | genau ein `<h1>`, geprüfte Gliederung |
 | Bilder | JPEG bis 2,7 MB | WebP, zwei Größen, `loading="lazy"` |
@@ -69,7 +72,8 @@ Klima-Seite. Die wichtigsten Befunde:
 - **Wortmarke unverändert** übernommen (`franzmann_logo_web.png`).
 - **Farben am Original gemessen:** Navy `#344d6d` und Azur `#017bbf` aus der
   Wortmarke; Sandstein `#ae9485`/`#675352`, Fensterläden-Navy `#546883` und
-  Kopfsteinpflaster `#84807a` aus dem Foto des Betriebsgebäudes.
+  Pflastergrau `#84807a` aus einer Gebäudeaufnahme des Betriebs. Bemerkenswert:
+  das Navy der Fensterläden ist praktisch identisch mit dem Navy der Wortmarke.
 - **Der Mittelpunkt als Trenner** vom alten Firmenschild („Sanitär · Heizung ·
   Solar") ist als typografisches Detail durchgängig übernommen.
 - **Eigene Sätze des Betriebs** stehen wörtlich auf der Seite: „von Keller bis
@@ -236,10 +240,16 @@ der Fokus springt auf das betreffende Feld.
   Profilseite.
 - **Der Aufruf zur Bewertung** zeigt auf das Bewertungsformular derselben
   Plattform — dieselbe Quelle, die auch die gezeigte Stimme trägt.
-- **Kein Google-Karussell**, weil sich in dieser Umgebung kein Google-Profil
-  zweifelsfrei verifizieren ließ (Begründung und Versuche in
-  `docs/source-audit.md`, Abschnitt 1B). Einen Place ID zu raten, um die
-  Vorgabe formal zu erfüllen, wäre eine Erfindung gewesen.
+- **Das Google-Profil ist bestätigt** — der Betrieb hat den Teilen-Link genannt,
+  er löst auf die Kennung `/g/1tg9m25r` auf. Zwei Schaltflächen führen dorthin:
+  „Bewertungen bei Google lesen" und „Auf Google bewerten".
+- **Aber keine Google-Bewertungen auf der Seite.** Deren Texte ließen sich nicht
+  auslesen: Google liefert ohne Browser nur eine Weiterleitungsseite, und der
+  Textabruf endet in einer Sicherheitsabfrage (Belege in `docs/source-audit.md`,
+  Abschnitt 1B). Es steht deshalb **keine Google-Note**, **keine Anzahl** und
+  **keine nacherzählte Bewertung** auf der Website. Ein Link auf das
+  Bewertungsformular verlangt eine Place ID, die sich nicht ermitteln ließ — er
+  wurde nicht konstruiert; die Beschriftung verspricht nur, was sie hält.
 - **Drei Bewertungen eines Branchenportals wurden bewusst verworfen.** Zwei
   davon tragen Zeitstempel im Abstand von 14 Sekunden, der Text nennt das
   Portal selbst und liest sich wie eine Vorlage; die dort hinterlegte
@@ -257,7 +267,7 @@ der Fokus springt auf das betreffende Feld.
 
 ## 10 · Was geprüft wurde
 
-**183 Playwright-Prüfungen, 0 Fehler, 39 übersprungen** (Prüfungen, die nur
+**195 Playwright-Prüfungen, 0 Fehler, 39 übersprungen** (Prüfungen, die nur
 in einer Größe sinnvoll sind), verteilt auf drei Geräteklassen:
 Telefon 390 × 844, Tablet 834 × 1112, Rechner 1440 × 900.
 
@@ -265,9 +275,9 @@ Telefon 390 × 844, Tablet 834 × 1112, Rechner 1440 × 900.
 |---|---|
 | `01-carga-y-cabeceras` | zehn Seiten mit Status 200, `X-Robots-Tag`, `nosniff`, `Referrer-Policy`, CSP; genau ein `<h1>`; 404; API lehnt GET ab und meldet nie Erfolg; keine Fremdverbindungen; keine Konsolenfehler |
 | `02-responsive-overflow` | 320 / 360 / 390 / 430 / 768 / 1024 / 1440 px und Querformat 844 × 390 auf fünf Seiten |
-| `03-carrusel` | die sechzehn geforderten Punkte: Laden, Selbstlauf, Vor, Zurück, Punkte, Wiederanlauf nach Pfeil, nach Punkt, nach Zeigen, Pause hält, Play läuft weiter, Höhe folgt der Folie, kein Überlauf, Tastatur, gültige Quell-Links, geprüfter Bewertungs-Link, `prefers-reduced-motion`; dazu ARIA |
+| `03-carrusel` | die sechzehn geforderten Punkte: Laden, Selbstlauf, Vor, Zurück, Punkte, Wiederanlauf nach Pfeil, nach Punkt, nach Zeigen, Pause hält, Play läuft weiter, Höhe folgt der Folie, kein Überlauf, Tastatur, gültige Quell-Links, geprüfter Bewertungs-Link, `prefers-reduced-motion`; dazu ARIA, der Verweis auf das Google-Profil und die Zusicherung, dass keine ungelesene Google-Note behauptet wird |
 | `04-termin-assistent` | genau drei Schritte, kein vierter Prüfschritt, vollständiger Durchlauf, lebende Zusammenfassung, Fokus auf das fehlerhafte Feld, Wochenende und Uhrzeit außerhalb der Bürozeiten, kein Schein-Erfolg, Kontexterhalt mit „Ändern", Vorauswahl aus allen vier Leistungsseiten |
-| `05-navegacion-y-ux` | feste Leiste, kein Burger, sechs sichtbare Ziele, kein CTA unter der Leiste, schwebende Schaltfläche schmal und mit Escape schließbar, Trefferflächen ≥ 44 px, alle Kopfzeilen-Links, kein toter interner Link, Zeichnung führt zu jeder Leistung, kein Projektvokabular auf zehn Seiten, keine Schein-Bedienelemente, `tel:`-Links |
+| `05-navegacion-y-ux` | feste Leiste, kein Burger, sechs sichtbare Ziele, kein CTA unter der Leiste, schwebende Schaltfläche schmal und mit Escape schließbar, Trefferflächen ≥ 44 px, alle Kopfzeilen-Links, kein toter interner Link, Zeichnung führt zu jeder Leistung, gleiche Anschrift auf allen Seiten, Route mit vollständiger Adresse, kein Projektvokabular auf zehn Seiten, keine Schein-Bedienelemente, `tel:`-Links |
 | `06-accesibilidad` | Kontrast AA mit Alpha-Überlagerung auf vier Seiten, Landmarks, Überschriftenfolge ohne Sprung, `lang`, Sprunglink, sichtbarer Fokus, Alt-Texte, Formularbeschriftungen, Bewertung nicht nur über Farbe, reduzierte Bewegung, **Darstellung ohne JavaScript** |
 
 **Nachweis, dass die Prüfungen greifen.** Zwei Fehler wurden absichtlich
@@ -351,21 +361,26 @@ belegte Leistungen und anerkanntes Fachwissen des Gewerks.
 
 ## 12 · Nächste Schritte
 
-1. **Adresse klären** (großer Nutzen, sehr kleiner Aufwand).
-   Footer und Impressum der bisherigen Website widersprechen sich. Eine
-   uneinheitliche Adresse kostet unmittelbar lokale Sichtbarkeit. Ein Wort
-   genügt — der Wert steht an einer Stelle in `src/data/business.ts`.
-2. **Google-Unternehmensprofil bestätigen** (großer Nutzen, kleiner Aufwand).
-   Sobald die Profil-URL feststeht, kommen Bewertungen mit Autor, Datum und
-   Link in `src/data/reviews.ts`; Karussell und Strukturdaten übernehmen sie
-   ohne weitere Änderung.
+1. **Alte Anschrift überall nachziehen** (großer Nutzen, kleiner Aufwand).
+   Handelsregister, Impressum der alten Website, Gelbe Seiten, 11880, golocal,
+   sanitaer.org, wasserwaermeluft.de und der OpenStreetMap-Eintrag
+   „Franzmann Bad & Heizung" führen noch die Münzgasse. Solange das so bleibt,
+   schicken Kartendienste Kunden an die falsche Adresse und die lokale
+   Sichtbarkeit leidet.
+2. **Google-Bewertungen übernehmen** (großer Nutzen, kleiner Aufwand).
+   Das Profil ist verlinkt, die Texte fehlen noch. Autor, Datum, Wortlaut und
+   Link je Bewertung in `src/data/reviews.ts` eintragen — ab der zweiten Stimme
+   schaltet sich das Karussell samt Bedienelementen von selbst frei, und die
+   Gesamtnote wandert in die strukturierten Daten.
 3. **Mailversand anschließen** (großer Nutzen, kleiner Aufwand).
    Drei Secrets hinterlegen — `RESEND_API_KEY`, `ANFRAGE_EMPFAENGER`,
    `ANFRAGE_ABSENDER`. Die Oberfläche bleibt unverändert.
-4. **Eigene Projektfotos** (großer Nutzen, mittlerer Aufwand).
-   Die Badfotos im Bestand wirken wie Katalogware. Fünf bis zehn eigene
-   Aufnahmen fertiger Bäder und Heizungsanlagen — gern mit Vorher/Nachher —
-   würden die Referenzen tragen, die die bisherige Seite nur ankündigt.
+4. **Eigene Projektfotos, dazu ein Bild des Standorts** (großer Nutzen,
+   mittlerer Aufwand). Die Badfotos im Bestand wirken wie Katalogware. Fünf bis
+   zehn eigene Aufnahmen fertiger Bäder und Heizungsanlagen — gern mit
+   Vorher/Nachher — würden die Referenzen tragen, die die bisherige Seite nur
+   ankündigt. Und ein Foto des Gebäudes in der Sulzbacher Straße: das vorhandene
+   Gebäudebild zeigt einen anderen Standort und wurde deshalb nicht verwendet.
 5. **Preisanker für die Badsanierung** (mittlerer Nutzen, mittlerer Aufwand).
    „Ab welchem Betrag?" ist die häufigste unausgesprochene Frage. Schon eine
    belastbare Spanne je Badgröße würde die Anfragen deutlich qualifizieren —

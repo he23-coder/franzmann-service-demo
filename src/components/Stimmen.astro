@@ -9,7 +9,7 @@
  * Das Karussell schaltet sich erst ab zwei Stimmen frei; bei einer einzigen
  * gäbe es keine Bedienelemente, die etwas bewirken.
  */
-import { reviews, reviewsAggregate } from '@/data/reviews';
+import { reviews, reviewsAggregate, googleProfil } from '@/data/reviews';
 
 const mehrere = reviews.length > 1;
 ---
@@ -109,11 +109,23 @@ const mehrere = reviews.length > 1;
       {reviewsAggregate.reviewCount === 1 ? ' Bewertung' : ' Bewertungen'}
       <span class="mass">Quelle: {reviewsAggregate.platform}</span>
     </p>
-    <p>Sie waren Kunde bei uns? Eine kurze Rückmeldung hilft anderen bei der Entscheidung.</p>
-    <a class="knopf knopf--handlung" href={reviewsAggregate.writeReviewUrl}
+
+    <p>
+      Alle weiteren Rückmeldungen stehen in unserem Unternehmensprofil bei Google.
+    </p>
+    <a class="knopf knopf--leer stimmen__weg" href={googleProfil.url}
        target="_blank" rel="noopener noreferrer">
-      Bewertung schreiben
-      <span class="nur-sr">bei {reviewsAggregate.platform} — öffnet in neuem Tab</span>
+      Bewertungen bei Google lesen
+      <span class="nur-sr">— öffnet in neuem Tab</span>
+    </a>
+
+    <p class="stimmen__trenner">
+      Sie waren Kunde bei uns? Eine kurze Rückmeldung hilft anderen bei der Entscheidung.
+    </p>
+    <a class="knopf knopf--handlung" href={googleProfil.url}
+       target="_blank" rel="noopener noreferrer">
+      Auf Google bewerten
+      <span class="nur-sr">— öffnet unser Google-Profil in neuem Tab, dort führt „Rezension schreiben" zum Formular</span>
     </a>
   </aside>
 </section>
@@ -288,6 +300,12 @@ const mehrere = reviews.length > 1;
   }
   .stimmen__aufruf p { font-size: .9375rem; color: var(--ink-2); }
   .stimmen__aufruf .knopf { justify-self: start; }
+  .stimmen__weg { font-size: .875rem; padding: .6rem 1rem; min-height: 2.75rem; }
+  .stimmen__trenner {
+    margin-top: .35rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--linie);
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .protokoll { animation: none; }
