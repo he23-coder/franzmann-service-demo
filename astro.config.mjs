@@ -8,7 +8,8 @@ export default defineConfig({
   // Adresse der veröffentlichten Seite. Sie fließt in canonical, Open Graph
   // und die Sitemap ein und lässt sich beim Bauen überschreiben:
   //   SITE_URL=https://…workers.dev npm run build
-  site: process.env.SITE_URL ?? 'https://franzmann-bad-heizung-weinheim.workers.dev',
+  // `||` statt `??`: eine nicht gesetzte Variable kommt als leerer String an.
+  site: process.env.SITE_URL || 'https://franzmann-bad-heizung-weinheim.workers.dev',
   output: 'static',
   trailingSlash: 'never',
   integrations: [sitemap()],
