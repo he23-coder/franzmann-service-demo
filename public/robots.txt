@@ -1,0 +1,7 @@
+# Das Ausschließen aus dem Index erfolgt über den Kopf X-Robots-Tag.
+# Damit Suchmaschinen diesen Kopf überhaupt lesen können, darf das
+# Abrufen hier nicht verboten werden.
+User-agent: *
+Allow: /
+
+Sitemap: https://franzmann-bad-heizung-weinheim.he23-coder.workers.dev/sitemap-index.xml
