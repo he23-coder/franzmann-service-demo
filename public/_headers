@@ -1,0 +1,12 @@
+# Rückfallebene für die Kopfzeilen.
+#
+# Im Regelfall setzt sie der Worker (src/worker.ts) für jede Antwort. Diese
+# Datei greift zusätzlich, wenn der Stand einmal ohne den Worker ausgeliefert
+# wird — etwa über Cloudflare Pages. Ohne sie fehlte dann X-Robots-Tag.
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'
